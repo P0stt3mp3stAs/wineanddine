@@ -1,0 +1,330 @@
+{
+    "specialties": [
+        {
+        "name": "Classic Beef Wellington",
+        "description": "served with creamy mashed potato & red wine jus",
+        "price": 120.00
+        }
+    ],
+    "salads": [
+        {
+            "name": "Caesar Salad",
+            "description": "Confit egg yolk dressing, pancetta crumb, anchovies, aged parmesan crisps",
+            "prices": 16.00
+        },
+        {
+            "name": "Crispy Duck Salad",
+            "description": "Watercress, mooli, chilli, radish, ginger, sesame seeds, orange & soy dressing",
+            "prices": 21.00
+        },
+        {
+            "name": "BSK Poke Bowl",
+            "description": "Sushi rice, quinoa, mango, radish, chilli & garlic marinated tofu, edamame, wakame",
+            "prices": 16.00
+        },
+        {
+            "name": "Kale Salad",
+            "description": "Heritage carrots, fennel, almonds, radish, orange dressing",
+            "prices": 14.00
+        }
+    ],
+    "steaks": [
+        {
+            "name": "Bone-in Sirloin",
+            "price": 12.50,
+            "unit": "per 100g"
+        },
+        {
+            "name": "Bone-in Prime Rib",
+            "price": 12.50,
+            "unit": "per 100g"
+        },
+        {
+            "name": "Porterhouse",
+            "price": 13.00,
+            "unit": "per 100g"
+        },
+        {
+            "name": "Dry-aged Rib-Eye Steak",
+            "price": 44.00,
+            "unit": "10oz"
+        },
+        {
+            "name": "Dry-aged Sirloin Steak",
+            "price": 42.00,
+            "unit": "10oz"
+        }
+    ],
+    "snacks_and_starters": [
+        {
+            "name": "Mixed Marinated Olives",
+            "description": "Olives, olive oil, herbs, spices",
+            "price": 6.50
+        },
+        {
+            "name": "Bread Basket",
+            "description": "Butter",
+            "price": 5.50
+        },
+        {
+            "name": "Burrata",
+            "description": "Pear, walnuts, chilli honey",
+            "price": 14.00
+        },
+        {
+            "name": "Spiced Fried Cauliflower",
+            "description": "Coconut yoghurt, herb dressing",
+            "price": 9.50
+        },
+        {
+            "name": "Tamarind Spiced Chicken Wings",
+            "description": "Spring onions, coriander",
+            "price": 13.50
+        },
+        {
+            "name": "Wagyu Meatballs",
+            "description": "Roast tomato sauce, grilled sourdough",
+            "price": 16.00
+        },
+        {
+            "id": "sns-007",
+            "name": "Cauliflower Velouté",
+            "description": "Hazelnuts, truffle oil, mushroom",
+            "price": 9.00
+        },
+        {
+            "name": "Harissa Spiced Nuts",
+            "description": "Mixed nuts, harissa, spices",
+            "price": 6.50
+        },
+        {
+            "name": "Crab on Toast",
+            "description": "Avocado, furikake, lime",
+            "price": 13.00
+        },
+        {
+            "name": "Prawn Cocktail",
+            "description": "Cucumber, avocado, pink grapefruit, tobiko",
+            "price": 16.00
+        },
+        {
+            "name": "Spicy Tuna Tartare",
+            "description": "Avocado, crispy wonton, sesame",
+            "price": 18.50
+        },
+        {
+            "name": "Saffron Onions & Teardrop Peppers Flatbread",
+            "description": "Labneh, herb salad, sumac",
+            "price": 13.00
+        },
+        {
+            "name": "Roast Beef Carpaccio",
+            "description": "Pickled artichokes, truffle dressing",
+            "price": 17.00
+        },
+        {
+            "name": "Salmon Gravlax",
+            "description": "Shaved fennel, crème fraiche, dill",
+            "price": 18.00
+        }
+    ],
+    "mains": [
+        {
+            "name": "Slow Cooked Pork Ribs",
+            "description": "BBQ glaze, chilli, watercress & shallot salad",
+            "price": 36.00
+        },
+        {
+            "name": "Butter Chicken Curry",
+            "description": "Chicken, butter, cream, spices",
+            "price": 18.00
+        },
+        {
+            "name": "Chickpea & Butternut Squash Tikka Masala",
+            "description": "Chickpeas, butternut squash, tikka masala sauce, spices",
+            "price": 17.00
+        },
+        {
+            "name": "Sandwich",
+            "description": "Lamb, lettuce, mint chimichurri, Jameson's whiskey mayonnaise, shallots, Koffmann's fries",
+            "price": 26.00
+        },
+        {
+            "name": "Mushroom Cannelloni",
+            "description": "Ricotta, fior di latte, parmesan",
+            "price": 19.50
+        },
+        {
+            "name": "Fish & Chips",
+            "description": "Mushy peas, tartare sauce",
+            "price": 23.00
+        },
+        {
+            "name": "Roasted Cod",
+            "description": "Crushed potatoes, artichokes, capers, red wine & lemon sauce",
+            "price": 29.50
+        },
+        {
+            "name": "California Roll",
+            "description": "Snow crab, tobiko, avocado, cucumber, wasabi, pickled ginger, soy",
+            "price": 17.50
+        },
+        {
+            "name": "Steamed Sea Bream",
+            "description": "Bok choi, ginger & soy dressing",
+            "price": 20.00
+        },
+        {
+            "name": "Thai Red Prawn Curry",
+            "description": "Prawn crackers, chilli",
+            "price": 22.00
+        },
+        {
+            "name": "Venison Pinwheel Sausage",
+            "description": "Mashed potato, cranberry, kale, red wine jus",
+            "price": 25.50
+        }
+    ],
+    "sides": [
+        {
+            "name": "Koffmann's Fries",
+            "description": "Crispy fries, truffle oil, sea salt",
+            "price": 6.50
+        },
+        {
+            "name": "Macaroni Cheese",
+            "description": "Roasted garlic crumb",
+            "price": 7.75
+        },
+        {
+            "name": "Mixed Leaf Salad",
+            "description": "Cherry tomatoes",
+            "price": 5.75
+        },
+        {
+            "name": "Grilled Corn",
+            "description": "Chimichurri",
+            "price": 7.00
+        },
+        {
+            "name": "Creamy Mashed Potato",
+            "description": "Potatoes, butter, cream, seasoning",
+            "price": 6.75
+        },
+        {
+            "name": "Tenderstem Broccoli",
+            "description": "Romesco sauce, smoked almonds",
+            "price": 7.00
+        },
+        {
+            "name": "Buttered Spinach",
+            "description": "Nutmeg",
+            "price": 6.50
+        },
+        {
+            "name": "Toasted Coconut Rice",
+            "description": "Rice, toasted coconut, coconut milk",
+            "price": 4.00
+        },
+        {
+            "name": "Béarnaise",
+            "price": 3.50
+        },
+        {
+            "name": "Bone Marrow & Shallot",
+            "price": 3.50
+        },
+        {
+            "name": "Peppercorn",
+            "price": 3.50
+        }
+    ],
+    "desserts": [
+        {
+            "name": "BSK Sundae",
+            "description": "Chocolate, raspberry, lime Chantilly",
+            "price": 12.00
+        },
+        {
+            "name": "Chocolate Fondant",
+            "description": "Salted caramel ice cream",
+            "price": 10.00
+        },
+        {
+            "name": "Sticky Toffee Pudding",
+            "description": "Milk ice cream",
+            "price": 10.50
+        },
+        {
+            "name": "Black Forest Cheesecake",
+            "description": "Cherry compote, pistachio ice cream",
+            "price": 10.00
+        }
+    ],
+    "gin_and_tonic": [
+        {
+            "name": "House Special G&T",
+            "description": "Monkey 47 Gin, Lillet Rose, elderflower, lavender, lemon, Fever-Tree Elderflower Tonic",
+            "price": 15.75
+        },
+        {
+            "name": "Murcian Lemon G&T",
+            "description": "Bombay 1er Cru Murcian Lemon Gin, Limoncello, Fever-Tree Mediterranean Tonic Water",
+            "price": 15.75
+        },
+        {
+            "name": "Pink Strawberry G&T",
+            "description": "Beefeater Pink Gin, Lillet Rose, Fever-Tree Elderflower Tonic, fresh strawberries",
+            "price": 14.50
+        },
+        {
+            "name": "Japanese G&T",
+            "description": "Ki No Bi Kyoto Dry Gin, Midori Melon Liqueur, lime, Fever-Tree Indian Tonic",
+            "price": 16.00
+        }
+    ],
+    "spritz": [
+        {
+            "name": "Aperol Spritz",
+            "description": "Aperol, Prosecco, Fever-Tree Soda Water",
+            "price": 15.75
+        },
+        {
+            "name": "Sicilian Spritz",
+            "description": "Malfy Arancia Blood Orange Gin, Select Aperitivo, Fever-Tree Mediterranean Tonic, Prosecco",
+            "price": 15.75
+        },
+        {
+            "name": "Black Forest Bellini",
+            "description": "Monkey 47 Black Forest Gin, spiced peach & apricot, Prosecco",
+            "price": 14.50
+        },
+        {
+            "name": "French 75",
+            "description": "Tanqueray No.10 Gin, lemon juice, Devaux Champagne",
+            "price": 16.00
+        },
+        {
+            "name": "Strawberry Spritz",
+            "description": "Black Cow Strawberry Vodka, strawberry, lemon juice, Prosecco, Fever–Tree White Grape & Apricot Soda",
+            "price": 15.50
+        }
+    ],
+    "champagne": [
+        {
+            "name": "Devaux Coeur Des Bar Blanc de Noir",
+            "description": "Champagne, France NV",
+            "price": 14.50
+        },
+        {
+            "name": "Veuve Clicquot Ponsardin Yellow Label Brut",
+            "description": "Champagne, France NV",
+            "price": 19.00
+        },
+        {
+            "name": "Veuve Clicquot Ponsardin Brut Rose",
+            "description": "Champagne, France NV",
+            "price": 22.00
+        }
+    ]
+}
