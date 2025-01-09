@@ -176,5 +176,89 @@ export const checkUsernameAvailability = async (username) => {
   });
 };
 
+// Modify your existing auth.js by adding these functions
+
+// Add this to your existing exports
+export const getAuthToken = () => {
+  if (typeof window === 'undefined') return null;
+  
+  const accessToken = localStorage.getItem('accessToken');
+  if (!accessToken) return null;
+  
+  return `Bearer ${accessToken}`;
+};
+
+// Add this helper function for authenticated API calls
+export const fetchWithAuth = async (url, options = {}) => {
+  const token = getAuthToken();
+  
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+
+  const headers = {
+    ...options.headers,
+    'Authorization': token,
+    'Content-Type': 'application/json',
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  // Handle token expiration
+  if (response.status === 401) {
+    // Optional: Attempt to refresh token
+    const cognitoUser = userPool.getCurrentUser();
+    if (cognitoUser) {
+      try {
+        await new Promise((resolve, reject) => {
+          cognitoUser.getSession((err, session) => {
+            if (err) {
+              signOut();
+              reject(err);
+            } else {
+              localStorage.setItem('accessToken', session.getAccessToken().getJwtToken());
+              resolve(session);
+            }
+          });
+        });
+        // Retry the request with new token
+        return fetchWithAuth(url, options);
+      } catch (error) {
+        signOut();
+        throw new Error('Session expired');
+      }
+    }
+  }
+
+  return response;
+};
+
+// Add this helper for protected API routes
+export const validateToken = async (token) => {
+  if (!token) return null;
+
+  try {
+    const cognitoUser = userPool.getCurrentUser();
+    if (!cognitoUser) return null;
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.getSession((err, session) => {
+        if (err || !session.isValid()) {
+          reject(err || new Error('Invalid session'));
+          return;
+        }
+        resolve(session);
+      });
+    });
+  } catch (error) {
+    console.error('Token validation error:', error);
+    return null;
+  }
+};
+
+
 // Export getCurrentUser from Amplify for server-side use
 export { getCurrentUser as getServerUser } from 'aws-amplify/auth';
