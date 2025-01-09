@@ -60,20 +60,20 @@
 
 
 // middleware.js
+// middleware.ts
+// // src/middleware.ts
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export async function middleware(request) {
-  // Get the pathname
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Define protected routes
   const protectedPaths = [
     '/api/reservations',
     '/api/profile',
     '/dashboard'
   ];
 
-  // Check if the current path should be protected
   const isProtectedPath = protectedPaths.some(prefix => 
     path.startsWith(prefix)
   );
@@ -81,7 +81,6 @@ export async function middleware(request) {
   if (isProtectedPath) {
     const authHeader = request.headers.get('Authorization');
 
-    // No auth header present
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       if (path.startsWith('/api/')) {
         return NextResponse.json(
@@ -89,28 +88,18 @@ export async function middleware(request) {
           { status: 401 }
         );
       }
-      // Redirect to login for non-API routes
       return NextResponse.redirect(new URL('/signin', request.url));
     }
 
-    // For API routes, let the route handler validate the token
     if (path.startsWith('/api/')) {
       return NextResponse.next();
     }
 
-    // For page routes, you might want to verify the token here
-    try {
-      // Continue to the protected route
-      const response = NextResponse.next();
-      response.headers.set('x-auth-status', 'authenticated');
-      return response;
-    } catch (error) {
-      // Token is invalid
-      return NextResponse.redirect(new URL('/signin', request.url));
-    }
+    const response = NextResponse.next();
+    response.headers.set('x-auth-status', 'authenticated');
+    return response;
   }
 
-  // Public routes
   return NextResponse.next();
 }
 

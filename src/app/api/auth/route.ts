@@ -1,13 +1,17 @@
+// src/app/api/auth/route.ts
 import { NextResponse } from 'next/server';
 import { signIn } from '@/utils/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
 
     const result = await signIn(email, password);
-
+    
     return NextResponse.json({
+      success: true,
       user: {
         id: result.getUsername(),
         email: email,
@@ -27,7 +31,6 @@ export async function POST(request: Request) {
   }
 }
 
-// Optional: Add GET method if needed
 export async function GET() {
   return NextResponse.json(
     { message: 'Auth endpoint ready' },

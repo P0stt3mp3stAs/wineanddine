@@ -7,6 +7,19 @@ import {
   CognitoUserAttribute
 } from 'amazon-cognito-identity-js';
 
+const poolData = {
+  UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+  ClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || '',
+};
+
+const isConfigValid = () => {
+  return Boolean(
+    process.env.NEXT_PUBLIC_USER_POOL_ID &&
+    process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID
+  );
+};
+
+
 // Configure Amplify
 const amplifyConfig = {
   Auth: {
@@ -27,16 +40,32 @@ const poolConfig = {
   ClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || ''
 };
 
-const userPool = new CognitoUserPool(poolConfig);
+let userPool = null;
+
+const getUserPool = () => {
+  if (!isConfigValid()) {
+    throw new Error('Cognito configuration is missing');
+  }
+  
+  if (!userPool) {
+    userPool = new CognitoUserPool(poolConfig);
+  }
+  
+  return userPool;
+};
 
 export const signUp = async (email, password, username) => {
+  if (!isConfigValid()) {
+    throw new Error('Authentication service not configured');
+  }
+
   return new Promise((resolve, reject) => {
     const attributeList = [
       new CognitoUserAttribute({ Name: 'email', Value: email }),
       new CognitoUserAttribute({ Name: 'preferred_username', Value: username })
     ];
 
-    userPool.signUp(
+    getUserPool().signUp(
       email,
       password,
       attributeList,
@@ -53,10 +82,14 @@ export const signUp = async (email, password, username) => {
 };
 
 export const verifyAccount = async (email, code) => {
+  if (!isConfigValid()) {
+    throw new Error('Authentication service not configured');
+  }
+
   return new Promise((resolve, reject) => {
     const cognitoUser = new CognitoUser({
       Username: email,
-      Pool: userPool
+      Pool: getUserPool()
     });
 
     cognitoUser.confirmRegistration(code, true, (err, result) => {
@@ -70,6 +103,10 @@ export const verifyAccount = async (email, code) => {
 };
 
 export const signIn = async (email, password) => {
+  if (!isConfigValid()) {
+    throw new Error('Authentication service not configured');
+  }
+
   return new Promise((resolve, reject) => {
     const authenticationDetails = new AuthenticationDetails({
       Username: email,
@@ -78,7 +115,7 @@ export const signIn = async (email, password) => {
 
     const cognitoUser = new CognitoUser({
       Username: email,
-      Pool: userPool
+      Pool: getUserPool()
     });
 
     cognitoUser.authenticateUser(authenticationDetails, {
@@ -105,8 +142,12 @@ export const signIn = async (email, password) => {
 };
 
 export const getCurrentUser = () => {
+  if (!isConfigValid()) {
+    return Promise.resolve(null);
+  }
+
   return new Promise((resolve, reject) => {
-    const cognitoUser = userPool.getCurrentUser();
+    const cognitoUser = getUserPool().getCurrentUser();
     
     if (!cognitoUser) {
       resolve(null);
@@ -147,7 +188,7 @@ export const getCurrentUser = () => {
 };
 
 export const signOut = () => {
-  const cognitoUser = userPool.getCurrentUser();
+  const cognitoUser = getUserPool().getCurrentUser();
   if (cognitoUser) {
     cognitoUser.signOut();
     if (typeof window !== 'undefined') {
@@ -161,24 +202,6 @@ export const isAuthenticated = () => {
   return localStorage.getItem('accessToken') !== null;
 };
 
-export const checkUsernameAvailability = async (username) => {
-  return new Promise((resolve, reject) => {
-    userPool.listUsers({
-      Filter: `preferred_username = "${username}"`,
-      Limit: 1
-    }, (err, data) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(data.Users.length === 0);
-    });
-  });
-};
-
-// Modify your existing auth.js by adding these functions
-
-// Add this to your existing exports
 export const getAuthToken = () => {
   if (typeof window === 'undefined') return null;
   
@@ -188,7 +211,6 @@ export const getAuthToken = () => {
   return `Bearer ${accessToken}`;
 };
 
-// Add this helper function for authenticated API calls
 export const fetchWithAuth = async (url, options = {}) => {
   const token = getAuthToken();
   
@@ -207,10 +229,8 @@ export const fetchWithAuth = async (url, options = {}) => {
     headers,
   });
 
-  // Handle token expiration
   if (response.status === 401) {
-    // Optional: Attempt to refresh token
-    const cognitoUser = userPool.getCurrentUser();
+    const cognitoUser = getUserPool().getCurrentUser();
     if (cognitoUser) {
       try {
         await new Promise((resolve, reject) => {
@@ -224,7 +244,6 @@ export const fetchWithAuth = async (url, options = {}) => {
             }
           });
         });
-        // Retry the request with new token
         return fetchWithAuth(url, options);
       } catch (error) {
         signOut();
@@ -236,12 +255,11 @@ export const fetchWithAuth = async (url, options = {}) => {
   return response;
 };
 
-// Add this helper for protected API routes
 export const validateToken = async (token) => {
   if (!token) return null;
 
   try {
-    const cognitoUser = userPool.getCurrentUser();
+    const cognitoUser = getUserPool().getCurrentUser();
     if (!cognitoUser) return null;
 
     return new Promise((resolve, reject) => {
@@ -259,6 +277,4 @@ export const validateToken = async (token) => {
   }
 };
 
-
-// Export getCurrentUser from Amplify for server-side use
 export { getCurrentUser as getServerUser } from 'aws-amplify/auth';
