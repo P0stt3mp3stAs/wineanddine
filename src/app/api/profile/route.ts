@@ -1,62 +1,25 @@
-// import { NextResponse } from 'next/server';
-// import { cookies } from 'next/headers';
-
-// export async function GET() {
-//   try {
-//     // Instead of using Amplify directly, get the session from cookies
-//     const cookieStore = cookies();
-//     const session = cookieStore.get('amplify-signin-with-hostedUI');
-
-//     if (!session) {
-//       return NextResponse.json(
-//         { error: 'Not authenticated' },
-//         { status: 401 }
-//       );
-//     }
-
-//     // Return a basic response for now to test the build
-//     return NextResponse.json({
-//       status: 'authenticated'
-//     });
-
-//   } catch (error) {
-//     console.error('Profile error:', error);
-//     return NextResponse.json(
-//       { error: 'Internal server error' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-
+// src/app/api/profile/route.ts
 import { NextResponse } from 'next/server';
-import { sign } from 'jsonwebtoken';
+import { getCurrentUser } from '@/utils/auth';
 
-export async function POST(request: Request) {
+export async function GET() {
   try {
-    const { email, password } = await request.json();
+    const user = await getCurrentUser();
     
-    // Your authentication logic here
-    // Verify user credentials from your database
-    
-    // Generate JWT token
-    const token = sign(
-      { userId: 'user_id', email },
-      process.env.JWT_SECRET!,
-      { expiresIn: '24h' }
-    );
+    if (!user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
 
-    return NextResponse.json({ 
-      token,
-      user: {
-        id: 'user_id',
-        email
-      }
+    return NextResponse.json({
+      name: user.username,
+      email: user.email
     });
+
   } catch (error) {
+    console.error('Profile error:', error);
     return NextResponse.json(
-      { error: 'Authentication failed' },
-      { status: 401 }
+      { error: 'Failed to load profile' },
+      { status: 500 }
     );
   }
 }

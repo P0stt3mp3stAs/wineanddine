@@ -5,8 +5,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import AmplifyProvider from '@/components/AmplifyProvider';
-import '../config/amplifyConfig';
-// import { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -27,7 +26,7 @@ export default function RootLayout({
         <AmplifyProvider>
           <Navbar />
           {children}
-          {/* <Toaster position="top-right" /> */}
+          <Toaster position="top-right" />
         </AmplifyProvider>
       </body>
     </html>

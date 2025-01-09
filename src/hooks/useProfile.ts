@@ -3,13 +3,12 @@ import { useState, useEffect } from 'react';
 import { getCurrentUser, deleteUser, signOut, fetchUserAttributes } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-// import { uploadImage, getImageUrl } from '@/utils/storage';
+import { uploadImage, getImageUrl } from '@/utils/storage';
 
 export interface UserProfile {
   email: string | null;
   username: string | null;
-  // profilePicture?: string;
-  user_id?: string; 
+  profilePicture?: string;
 }
 
 export const useProfile = () => {
@@ -27,16 +26,15 @@ export const useProfile = () => {
         setUserInfo({
           email: attributes.email || null,
           username: attributes['preferred_username'] || null,
-          user_id: currentUser.userId || attributes.sub,
         });
         
-        // try {
-        //   const imageKey = `profiles/${attributes['preferred_username']}/profile.jpg`;
-        //   const imageUrl = await getImageUrl(imageKey);
-        //   setUserInfo(prev => ({ ...prev, profilePicture: imageUrl }));
-        // } catch (error) {
-        //   console.log('No existing profile picture');
-        // }
+        try {
+          const imageKey = `profiles/${attributes['preferred_username']}/profile.jpg`;
+          const imageUrl = await getImageUrl(imageKey);
+          setUserInfo(prev => ({ ...prev, profilePicture: imageUrl }));
+        } catch (error) {
+          console.log('No existing profile picture');
+        }
       }
     } catch (error) {
       console.error('Error loading profile:', error);

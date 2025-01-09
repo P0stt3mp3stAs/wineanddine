@@ -1,4 +1,5 @@
 // lib/db.ts
+
 import { Pool } from 'pg';
 
 let pool: Pool;
@@ -38,14 +39,13 @@ export async function checkSeatAvailability(
   date: string,
   startTime: string,
   endTime: string,
-  // reservation_state: boolean,
   reservationType: 'drink-only' | 'dine-and-eat'
 ) {
   const text = `
     SELECT seat_id 
     FROM seat_reservations 
-    WHERE reservation_state = true
-      AND (reservation_date = $1)
+    WHERE 
+      reservation_date = $1 
       AND (
         (start_time, end_time) OVERLAPS ($2::time, $3::time)
       )

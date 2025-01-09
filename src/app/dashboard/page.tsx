@@ -50,7 +50,7 @@ export default function Dashboard() {
           <div className="bg-gray-800 text-white p-4 rounded-lg shadow-lg">
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-3xl font-black">welcome to Dashboard</h1>
+                <h1 className="text-3xl font-black">Dashboard</h1>
                 <p className="text-sm mt-2">
                   {userInfo.username && `@${userInfo.username}`}
                   <br />

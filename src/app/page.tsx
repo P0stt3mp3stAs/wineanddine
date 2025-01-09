@@ -2,12 +2,13 @@ import React from "react";
 import Link from "next/link";
 
 export default async function Home() {
+
   return (
     <main>
-      <div className="bg-gray-800 text-white p-4 text-center my-30">
+      <div className="bg-c8 text-white p-4 text-center mt-24">
         <h1 className="text-3xl font-black">Wine and Dine</h1>
       </div>
-      <div className="max-w-4xl mx-auto p-4 text-red-500 text-xl bg-yellow-400 font-black">
+      <div className="max-w-4xl mx-auto p-8 rounded-xl text-white text-xl bg-c7 font-black mt-7">
         <p className="mb-4">
           At Quiet Bites, we understand that dining out should be as comfortable as staying in. Designed with introverts in mind, our restaurant offers a serene, low-pressure atmosphere where you can enjoy exceptional meals without the bustle of traditional dining.
         </p>
@@ -20,12 +21,12 @@ export default async function Home() {
       </div>
       <div className="flex justify-center items-center my-10">
         <Link legacyBehavior href="/dashboard">
-          <a className="bg-red-600 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105 m-5">
+          <a className="bg-c8 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-c9 transition-transform transform hover:scale-105 m-5">
             Go to Dashboard
           </a>
         </Link>
         <Link legacyBehavior href="/profile">
-          <a className="bg-red-600 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-red-700 transition-transform transform hover:scale-105 m-5">
+          <a className="bg-c8 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-c9 transition-transform transform hover:scale-105 m-5">
             Go to Profile
           </a>
         </Link>
