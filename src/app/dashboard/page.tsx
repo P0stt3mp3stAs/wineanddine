@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '@/utils/auth';
 import { useRouter } from 'next/navigation';
-// import DashboardHero from '@/components/DashboardHero';
-// import ReservationSection from '@/components/ReservationSection';
-// import MenuPreview from '@/components/menu/MenuPreview';
+import DashboardHero from '@/components/DashboardHero';
+import ReservationSection from '@/components/ReservationSection';
+import MenuPreview from '@/components/menu/MenuPreview';
 
 interface UserInfo {
   email: string | null;
@@ -42,9 +42,9 @@ export default function Dashboard() {
 
   return (
     <main>
-      {/* <DashboardHero />
+      <DashboardHero />
       <MenuPreview />
-      <ReservationSection /> */}
+      <ReservationSection />
       <div className="p-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-gray-800 text-white p-4 rounded-lg shadow-lg">
