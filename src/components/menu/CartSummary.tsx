@@ -23,7 +23,6 @@ const CartSummary = () => {
           {isExpanded ? '▼' : '▲'}
         </span>
       </button>
-
       {/* Collapsible Items List */}
       {isExpanded && (
         <div className="max-h-60 overflow-y-auto mb-4">
@@ -38,7 +37,6 @@ const CartSummary = () => {
           ))}
         </div>
       )}
-
       {/* Total and Button - Always Visible */}
       <div className="mt-2 pt-2 border-t border-black">
         <div className="flex justify-between items-center font-bold text-black mb-4">

@@ -1,185 +1,197 @@
-import { query } from '@/lib/db';
+'use client';
+
+import { useEffect, useState } from 'react';
 import MenuSection from '@/components/menu/MenuSection';
-import CartWrapper from '@/components/menu/CartWrapper';
 import CartSummary from '@/components/menu/CartSummary';
+import { CartProvider } from '@/components/menu/CartContext';
 
-// Helper function to add category prefix to IDs and image paths
-function addCategoryPrefix(items: any[], prefix: string, imagePrefix: string) {
-  return items.map((item, index) => ({
-    ...item,
-    id: `${prefix}_${item.id}`,
-    imagePath: imagePrefix ? `${imagePrefix}-${(index + 1).toString().padStart(3, '0')}.${getImageExtension(imagePrefix, index + 1)}` : undefined
-  }));
+interface MenuItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image?: string;
+  unit?: string;
+  category?: string;
 }
 
-// Helper function to get the correct image extension
-function getImageExtension(prefix: string, index: number): string {
-  if (prefix === 'sal' && index === 1) return 'webp';
-  if (prefix === 'sal' && index === 3) return 'png';
-  if (prefix === 'mns' && index === 7) return 'avif';
-  return 'jpg';
+// Updated to match exact database table names
+interface MenuData {
+  champagnes: MenuItem[];
+  desserts: MenuItem[];
+  gin_and_tonics: MenuItem[];  // Updated to match database table name
+  mains: MenuItem[];           // Updated to match database table name
+  salads: MenuItem[];
+  sides: MenuItem[];
+  snacks_and_starters: MenuItem[];  // Updated to match database table name
+  specialties: MenuItem[];
+  spritzes: MenuItem[];
+  steaks: MenuItem[];
 }
 
-export default async function Menu() {
-  // Fetch all menu items
-  const [
-    champagnes,
-    desserts,
-    mains,
-    sides,
-    starters,
-    spritzes,
-    steaks,
-    specialties,
-    salads,
-    ginTonics
-  ] = await Promise.all([
-    query('SELECT * FROM champagnes'),
-    query('SELECT * FROM desserts'),
-    query('SELECT * FROM mains'),
-    query('SELECT * FROM sides'),
-    query('SELECT * FROM snacks_and_starters'),
-    query('SELECT * FROM spritzes'),
-    query('SELECT * FROM steaks'),
-    query('SELECT * FROM specialties'),
-    query('SELECT * FROM salads'),
-    query('SELECT * FROM gin_and_tonics')
-  ]);
+export default function Menu() {
+  const [menuData, setMenuData] = useState<MenuData>({
+    champagnes: [],
+    desserts: [],
+    gin_and_tonics: [],    // Updated to match database table name
+    mains: [],             // Updated to match database table name
+    salads: [],
+    sides: [],
+    snacks_and_starters: [], // Updated to match database table name
+    specialties: [],
+    spritzes: [],
+    steaks: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Add category prefixes and image paths
-  const processedChampagnes = addCategoryPrefix(champagnes, 'champ', '');
-  const processedDesserts = addCategoryPrefix(desserts, 'dess', 'des');
-  const processedMains = addCategoryPrefix(mains, 'main', 'mns');
-  const processedSides = addCategoryPrefix(sides, 'side', '');
-  const processedStarters = addCategoryPrefix(starters, 'start', '');
-  const processedSpritzes = addCategoryPrefix(spritzes, 'spritz', '');
-  const processedSteaks = addCategoryPrefix(steaks, 'steak', 'stk');
-  const processedSpecialties = addCategoryPrefix(specialties, 'spec', 'spc');
-  const processedSalads = addCategoryPrefix(salads, 'salad', 'sal');
-  const processedGinTonics = addCategoryPrefix(ginTonics, 'gin', '');
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        const response = await fetch('/api/menu');
+        const data = await response.json();
+        
+        if (data.success) {
+          setMenuData(data.data);
+        } else {
+          setError('Failed to load menu items');
+        }
+      } catch (error) {
+        setError('Failed to load menu items');
+        console.error('Error fetching menu items:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Define themes for different sections
-  const themes = {
-    specialty: {
-      backgroundColor: 'bg-amber-50',
-      titleColor: 'text-amber-900',
-      textColor: 'text-amber-800',
-      priceColor: 'text-amber-900'
-    },
-    champagne: {
-      backgroundColor: 'bg-yellow-50',
-      titleColor: 'text-yellow-800',
-      textColor: 'text-yellow-700',
-      priceColor: 'text-yellow-900'
-    },
-    dessert: {
-      backgroundColor: 'bg-pink-50',
-      titleColor: 'text-pink-800',
-      textColor: 'text-pink-700',
-      priceColor: 'text-pink-900'
-    },
-    main: {
-      backgroundColor: 'bg-blue-50',
-      titleColor: 'text-blue-800',
-      textColor: 'text-blue-700',
-      priceColor: 'text-blue-900'
-    },
-    steak: {
-      backgroundColor: 'bg-red-50',
-      titleColor: 'text-red-800',
-      textColor: 'text-red-700',
-      priceColor: 'text-red-900'
-    },
-    salad: {
-      backgroundColor: 'bg-green-50',
-      titleColor: 'text-green-800',
-      textColor: 'text-green-700',
-      priceColor: 'text-green-900'
-    }
-  };
+    fetchMenuItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-red-600 text-xl">{error}</div>
+      </div>
+    );
+  }
 
   return (
-    <CartWrapper>
-      <main className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="bg-gray-900 text-white p-6 rounded-lg text-center mb-12 shadow-xl">
-          <h1 className="text-4xl font-black tracking-tight">Our Menu</h1>
-        </div>
-
-        {/* Menu Sections */}
-        <div className="space-y-16">
-          {/* 1. House Specialties */}
-          {processedSpecialties.length > 0 && (
-            <div className="mb-20">
-              <MenuSection 
-                title="House Specialties" 
-                items={processedSpecialties}
-                theme={themes.specialty}
-              />
-            </div>
-          )}
-
-          {/* 2. Salads */}
-          <MenuSection 
-            title="Salads" 
-            items={processedSalads}
-            theme={themes.salad}
-          />
-
-          {/* 3. Main Courses */}
-          <MenuSection 
-            title="Main Courses" 
-            items={processedMains} 
-            theme={themes.main}
-          />
-
-          {/* 4. Steaks */}
-          <MenuSection 
-            title="Steaks" 
-            items={processedSteaks} 
-            theme={themes.steak}
-          />
-
-          {/* 5. Desserts */}
-          <MenuSection 
-            title="Desserts" 
-            items={processedDesserts} 
-            theme={themes.dessert}
-          />
-
-          {/* 6. Gin & Tonics */}
-          <MenuSection 
-            title="Gin & Tonics" 
-            items={processedGinTonics}
-          />
-
-          {/* 7. Champagnes */}
-          <MenuSection 
-            title="Champagnes & Sparkling" 
-            items={processedChampagnes} 
-            theme={themes.champagne} 
-          />
-
-          {/* 8. Spritzes */}
-          <MenuSection 
-            title="Spritzes & Cocktails" 
-            items={processedSpritzes}
-          />
-
-          {/* 10. Starters */}
-          <MenuSection 
-            title="Starters & Small Plates" 
-            items={processedStarters}
-          />
-
-          {/* 9. Side Dishes */}
-          <MenuSection 
-            title="Side Dishes" 
-            items={processedSides}
-          />
-        </div>
-      </main>
-      <CartSummary />
-    </CartWrapper>
+    <CartProvider>
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-4xl font-bold text-center mb-8">Our Menu</h1>
+        
+        <MenuSection
+          title="Our Specialties"
+          items={menuData.specialties}
+          theme={{ 
+            backgroundColor: 'bg-amber-50', 
+            titleColor: 'text-amber-800', 
+            textColor: 'text-amber-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Snacks & Starters"
+          items={menuData.snacks_and_starters}  // Updated to match database table name
+          theme={{ 
+            backgroundColor: 'bg-purple-50', 
+            titleColor: 'text-purple-800', 
+            textColor: 'text-purple-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Fresh Salads"
+          items={menuData.salads}
+          theme={{ 
+            backgroundColor: 'bg-green-50', 
+            titleColor: 'text-green-800', 
+            textColor: 'text-green-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Main Courses"
+          items={menuData.mains}  // Updated to match database table name
+          theme={{ 
+            backgroundColor: 'bg-blue-50', 
+            titleColor: 'text-blue-800', 
+            textColor: 'text-blue-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Premium Steaks"
+          items={menuData.steaks}
+          theme={{ 
+            backgroundColor: 'bg-red-50', 
+            titleColor: 'text-red-800', 
+            textColor: 'text-red-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Side Dishes"
+          items={menuData.sides}
+          theme={{ 
+            backgroundColor: 'bg-orange-50', 
+            titleColor: 'text-orange-800', 
+            textColor: 'text-orange-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Desserts"
+          items={menuData.desserts}
+          theme={{ 
+            backgroundColor: 'bg-pink-50', 
+            titleColor: 'text-pink-800', 
+            textColor: 'text-pink-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Champagnes"
+          items={menuData.champagnes}
+          theme={{ 
+            backgroundColor: 'bg-yellow-50', 
+            titleColor: 'text-yellow-800', 
+            textColor: 'text-yellow-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Spritzes"
+          items={menuData.spritzes}
+          theme={{ 
+            backgroundColor: 'bg-indigo-50', 
+            titleColor: 'text-indigo-800', 
+            textColor: 'text-indigo-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Gin & Tonics"
+          items={menuData.gin_and_tonics}  // Updated to match database table name
+          theme={{ 
+            backgroundColor: 'bg-cyan-50', 
+            titleColor: 'text-cyan-800', 
+            textColor: 'text-cyan-700' 
+          }}
+        />
+      </div>
+      
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
+        <CartSummary />
+      </div>
+    </CartProvider>
   );
 }

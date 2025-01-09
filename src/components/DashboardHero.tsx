@@ -49,7 +49,7 @@ const DashboardHero = () => {
   };
 
  return (
-   <div className="w-full h-[50vh] bg-red-500 relative overflow-hidden">
+   <div className="w-full h-[50vh] bg-bege-500 relative overflow-hidden">
      <div className="absolute inset-0">
        {slides.map((slide, index) => (
          <div

@@ -1,8 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    eslint: {
-      ignoreDuringBuilds: true
+  images: {
+    domains: ['my-app-user-profiles.s3.us-east-1.amazonaws.com']
+  },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        pg: false,
+        fs: false,
+        net: false,
+        tls: false,
+        dns: false,
+      };
     }
-  };
-  
-  module.exports = nextConfig;
+    return config;
+  },
+};
+
+module.exports = nextConfig;
