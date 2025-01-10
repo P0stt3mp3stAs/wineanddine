@@ -1,6 +1,6 @@
 'use client';
 
-import ModelViewer from '@/components/ModelViewer';
+// import ModelViewer from '@/components/ModelViewer';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -141,13 +141,13 @@ export default function SeatsPage() {
       </div>
 
       {/* 3D Viewer */}
-      <div className="flex-1">
+      {/* <div className="flex-1">
         <ModelViewer 
           availableSeats={availableSeats} 
           onSeatSelect={handleSeatSelect}
           onLoadingChange={setModelLoading}
         />
-      </div>
+      </div> */}
     </main>
   );
 }

@@ -11,12 +11,22 @@
 // } from '@react-three/drei';
 // import dynamic from 'next/dynamic';
 // import * as THREE from 'three';
+// import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
 // import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
+// import { group } from 'console';
 
 // interface ModelViewerProps {
 //   availableSeats?: string[];
 //   onSeatSelect?: (seatId: string) => void;
 //   onLoadingChange?: (loading: boolean) => void;
+// }
+
+// interface ModelProps {
+//   url: string;
+//   position?: [number, number, number];
+//   id?: string;
+//   isAvailable?: boolean;
+//   onSelect?: (id: string) => void;
 // }
 
 
@@ -176,13 +186,7 @@
 // };
 
 // // Enhanced Model component with loading state
-// function Model({ url, position, id, isAvailable, onSelect }: { 
-//   url: string; 
-//   position?: [number, number, number]; 
-//   id?: string;
-//   isAvailable?: boolean;
-//   onSelect?: (id: string) => void;
-// }) {
+// function Model({ url, position, id, isAvailable, onSelect }: ModelProps) {
 //   const { scene } = useGLTF(url);
 //   const [hovered, setHovered] = useState(false);
 //   const meshRef = useRef<THREE.Group>(null);
