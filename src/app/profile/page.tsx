@@ -1,24 +1,17 @@
 // pages/profile/page.tsx
 'use client';
 import { useState } from 'react';
-import ProfilePicture from '@/components/ProfilePicture';
-import { useProfile, UserProfile } from '@/hooks/useProfile';
+import { useProfile } from '@/hooks/useProfile';
 
 export default function Profile() {
   const { 
-    userInfo, 
-    setUserInfo, 
+    userInfo,
     isLoading, 
     error, 
-    setError, 
     handleSignOut, 
     handleDeleteAccount 
   } = useProfile();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  const handleImageUpdate = (url: string) => {
-    setUserInfo((prev: UserProfile) => ({ ...prev, profilePicture: url }));
-  };
 
   if (isLoading) {
     return (
@@ -29,19 +22,12 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8 text-black">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 text-black">
+      <div className="max-w-3xl mx-auto mt-20 bg-white rounded-lg shadow">
         <div className="p-6 space-y-8">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
           </div>
-
-          <ProfilePicture
-            username={userInfo.username}
-            initialImage={userInfo.profilePicture}
-            onImageUpdate={handleImageUpdate}
-            onError={setError}
-          />
 
           <div className="space-y-4">
             <div>
