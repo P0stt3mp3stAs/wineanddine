@@ -22,7 +22,7 @@ type MenuItemProps = {
 const MenuItem = ({ id, name, description, price, unit, image, theme }: MenuItemProps) => {
   console.log('MenuItem props:', { id, name, description, price, image, unit }); // Debug log
   
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [, setIsAnimating] = useState(false);
   const { items, addItem, removeItem } = useCart();
   
   const quantity = items.find(item => item.id === id)?.quantity || 0;

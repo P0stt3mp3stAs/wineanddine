@@ -13,7 +13,7 @@ export default function SeatsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [availableSeats, setAvailableSeats] = useState<string[]>([]);
-  const [modelLoading, setModelLoading] = useState(true);
+  const [, setModelLoading] = useState(true);
 
   // Get reservation details once
   const reservationType = searchParams.get('reservationType');

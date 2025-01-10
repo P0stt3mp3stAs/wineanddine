@@ -5,9 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getCurrentUser } from '@/utils/auth';
 
-interface ApiError {
-  message: string;
-}
 
 export default function ConfirmPage() {
   const router = useRouter();
