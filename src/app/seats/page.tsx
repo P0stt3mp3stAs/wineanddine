@@ -23,44 +23,44 @@ export default function SeatsPage() {
   const guestCount = searchParams.get('guestCount');
 
   // Memoize the availability check
-  useEffect(() => {
-    const checkAvailability = async () => {
-      try {
-        const currentlySelectedSeats = searchParams.get('selectedSeats')?.split(',') || [];
-        const response = await fetch('/api/availability', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            date,
-            startTime,
-            endTime,
-            guestCount,
-            reservationType,
-            selectedSeats: currentlySelectedSeats
-          }),
-        });
+  // useEffect(() => {
+  //   const checkAvailability = async () => {
+  //     try {
+  //       const currentlySelectedSeats = searchParams.get('selectedSeats')?.split(',') || [];
+  //       const response = await fetch('/api/availability', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           date,
+  //           startTime,
+  //           endTime,
+  //           guestCount,
+  //           reservationType,
+  //           selectedSeats: currentlySelectedSeats
+  //         }),
+  //       });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
 
-        const data: AvailabilityData = await response.json();
+  //       const data: AvailabilityData = await response.json();
         
-        if (data.success) {
-          setAvailableSeats(data.availableSeats);
-        } else {
-          throw new Error('Failed to get availability data');
-        }
-      } catch (error) {
-        console.error('Error checking availability:', error);
-        alert('Failed to load available seats. Please try again.');
-      }
-    };
+  //       if (data.success) {
+  //         setAvailableSeats(data.availableSeats);
+  //       } else {
+  //         throw new Error('Failed to get availability data');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error checking availability:', error);
+  //       alert('Failed to load available seats. Please try again.');
+  //     }
+  //   };
 
-    checkAvailability();
-  }, [date, startTime, endTime, guestCount, reservationType]);
+  //   checkAvailability();
+  // }, [date, startTime, endTime, guestCount, reservationType]);
 
   // const handleSeatSelect = (seatId: string) => {
   //   const params = new URLSearchParams();
