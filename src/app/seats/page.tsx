@@ -10,10 +10,10 @@ interface AvailabilityData {
 }
 
 export default function SeatsPage() {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const [availableSeats, setAvailableSeats] = useState<string[]>([]);
-  const [, setModelLoading] = useState(true);
+  // const [, setModelLoading] = useState(true);
 
   // Get reservation details once
   const reservationType = searchParams.get('reservationType');
@@ -62,17 +62,17 @@ export default function SeatsPage() {
     checkAvailability();
   }, [date, startTime, endTime, guestCount, reservationType]);
 
-  const handleSeatSelect = (seatId: string) => {
-    const params = new URLSearchParams();
-    params.set('reservationType', reservationType || '');
-    params.set('date', date || '');
-    params.set('startTime', startTime || '');
-    params.set('endTime', endTime || '');
-    params.set('guestCount', guestCount || '');
-    params.set('selectedSeat', seatId);
+  // const handleSeatSelect = (seatId: string) => {
+  //   const params = new URLSearchParams();
+  //   params.set('reservationType', reservationType || '');
+  //   params.set('date', date || '');
+  //   params.set('startTime', startTime || '');
+  //   params.set('endTime', endTime || '');
+  //   params.set('guestCount', guestCount || '');
+  //   params.set('selectedSeat', seatId);
 
-    router.push(`/seats/confirm?${params.toString()}`);
-  };
+  //   router.push(`/seats/confirm?${params.toString()}`);
+  // };
 
   // Loading screen with animation
   // if (modelLoading) {

@@ -2,7 +2,7 @@ import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 
 export const checkAuthStatus = async () => {
   try {
-    const currentUser = await getCurrentUser();
+    // const currentUser = await getCurrentUser();
     const attributes = await fetchUserAttributes();
     console.log('Current logged in user:', attributes.email);
     return {
