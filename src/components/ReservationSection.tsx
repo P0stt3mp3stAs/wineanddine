@@ -98,8 +98,8 @@ const ReservationSection = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-green-500 flex items-center justify-center p-8">
-      <div className="max-w-2xl w-full bg-white rounded-lg shadow p-6">
+    <div className="w-full min-h-screen bg-c7 flex items-center justify-center p-8">
+      <div className="max-w-2xl w-full bg-c6 rounded-lg shadow p-6">
         <h2 className="text-2xl font-bold mb-6 text-black">Make a Reservation</h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -152,13 +152,13 @@ const ReservationSection = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2 text-black">Number of Guests</label>
+            <label className="block text-sm font-medium mb-2 text-white">Number of Guests</label>
             <div className="flex gap-4">
               <button
                 type="button"
                 onClick={() => setGuestCount('2')}
                 className={`flex-1 px-4 py-2 rounded ${
-                  guestCount === '2' ? 'bg-black text-white' : 'bg-gray-200 text-black'
+                  guestCount === '2' ? 'bg-c8 text-white' : 'bg-gray-200 text-black'
                 }`}
               >
                 2 or less
@@ -167,7 +167,7 @@ const ReservationSection = () => {
                 type="button"
                 onClick={() => setGuestCount('4')}
                 className={`flex-1 px-4 py-2 rounded ${
-                  guestCount === '4' ? 'bg-black text-white' : 'bg-gray-200 text-black'
+                  guestCount === '4' ? 'bg-c8 text-white' : 'bg-gray-200 text-black'
                 }`}
               >
                 4 or less
@@ -176,7 +176,7 @@ const ReservationSection = () => {
                 type="button"
                 onClick={() => setGuestCount('8')}
                 className={`flex-1 px-4 py-2 rounded ${
-                  guestCount === '8' ? 'bg-black text-white' : 'bg-gray-200 text-black'
+                  guestCount === '8' ? 'bg-c8 text-white' : 'bg-gray-200 text-black'
                 }`}
               >
                 8 or less
@@ -186,7 +186,7 @@ const ReservationSection = () => {
 
           <button 
             type="submit"
-            className="w-full bg-black text-white py-3 rounded-lg font-medium hover:bg-gray-800 transition-colors"
+            className="w-full bg-c8 text-white py-3 rounded-lg font-medium hover:bg-c9 transition-colors"
           >
             Submit Reservation
           </button>

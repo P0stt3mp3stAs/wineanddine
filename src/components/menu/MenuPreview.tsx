@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const MenuPreview = () => {
  return (
-   <div className="w-full h-[50vh] bg-pink-500 flex items-center justify-center">
+   <div className="w-full h-[50vh] flex items-center justify-center">
      <div className="container mx-auto px-4">
        <h2 className="text-3xl font-bold text-center text-white mb-8">Preview Our Menu</h2>
        
@@ -61,7 +61,7 @@ const MenuPreview = () => {
 
        <div className="flex justify-end mt-8">
             <Link href="/menu">
-                <button className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800">
+                <button className="bg-c8 text-white px-6 py-2 rounded hover:bg-c9">
                     View Options
                 </button>
             </Link>

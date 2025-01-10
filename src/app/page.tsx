@@ -8,7 +8,7 @@ export default async function Home() {
       <div className="bg-c8 text-white p-4 text-center mt-24">
         <h1 className="text-3xl font-black">Wine and Dine</h1>
       </div>
-      <div className="max-w-4xl mx-auto p-8 rounded-xl text-white text-xl bg-c7 font-black mt-7">
+      <div className="max-w-4xl mx-auto p-8 rounded-3xl text-white text-xl bg-c7 font-black mt-7">
         <p className="mb-4">
           At Quiet Bites, we understand that dining out should be as comfortable as staying in. Designed with introverts in mind, our restaurant offers a serene, low-pressure atmosphere where you can enjoy exceptional meals without the bustle of traditional dining.
         </p>

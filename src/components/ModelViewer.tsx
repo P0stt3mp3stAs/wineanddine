@@ -19,6 +19,7 @@ interface ModelViewerProps {
   onLoadingChange?: (loading: boolean) => void;
 }
 
+
 // Loading component for individual models
 function ModelLoader({ url }: { url: string }) {
   const { progress } = useProgress();
@@ -33,11 +34,13 @@ function ModelLoader({ url }: { url: string }) {
 }
 
 // Enhanced First Person Controller with WASD movement
-function FirstPersonController() {
-  const controlsRef = useRef<PointerLockControlsImpl>(null);
-  const { scene, camera } = useThree();
-  const moveSpeed = 0.15;
-  const moveVector = useRef(new THREE.Vector3());
+const FirstPersonController = () => {
+  const controlsRef = useRef();
+  const { camera } = useThree();
+
+  // Movement parameters
+  const moveSpeed = 0.05;
+  const runningMultiplier = 1.5;
   const moveState = useRef({
     forward: false,
     backward: false,
@@ -46,11 +49,11 @@ function FirstPersonController() {
     running: false
   });
 
-  // Smooth movement implementation
+  // Smooth movement parameters
   const velocity = useRef(new THREE.Vector3());
-  const acceleration = 0.25;
-  const deceleration = 0.9;
-  const maxVelocity = 0.5;
+  const acceleration = 0.08;
+  const deceleration = 0.85;
+  const maxVelocity = 0.2;
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -101,82 +104,76 @@ function FirstPersonController() {
       }
     };
 
+    const handleBlur = () => {
+      moveState.current = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        running: false
+      };
+      velocity.current.set(0, 0, 0);
+    };
+
+    window.addEventListener('blur', handleBlur);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 
     return () => {
+      window.removeEventListener('blur', handleBlur);
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
 
-  const checkCollision = useCallback((direction: THREE.Vector3): boolean => {
-    const raycaster = new THREE.Raycaster(
-      camera.position.clone(),
-      direction.clone().normalize(),
-      0,
-      0.5
-    );
-
-    const intersects = raycaster.intersectObjects(scene.children, true);
-    return intersects.some(intersect => 
-      intersect.object instanceof THREE.Mesh && 
-      intersect.object.userData.collidable
-    );
-  }, [camera, scene]);
-
   useFrame(() => {
     if (!(controlsRef.current as any)?.isLocked) return;
 
-    const currentSpeed = moveState.current.running ? moveSpeed * 1.5 : moveSpeed;
+    const currentSpeed = moveState.current.running ? 
+      moveSpeed * runningMultiplier : 
+      moveSpeed;
+
+    // Get camera direction
+    const direction = new THREE.Vector3();
+    const frontVector = new THREE.Vector3();
+    const sideVector = new THREE.Vector3();
+    const rotation = new THREE.Vector3();
+
+    // Update movement based on camera direction
+    camera.getWorldDirection(direction);
+    frontVector.setFromMatrixColumn(camera.matrix, 0);
+    sideVector.setFromMatrixColumn(camera.matrix, 0);
+    rotation.set(0, 0, 0);
 
     // Calculate movement direction
-    moveVector.current.set(0, 0, 0);
-    
-    if (moveState.current.forward) moveVector.current.z -= 1;
-    if (moveState.current.backward) moveVector.current.z += 1;
-    if (moveState.current.left) moveVector.current.x -= 1;
-    if (moveState.current.right) moveVector.current.x += 1;
+    direction.y = 0;
+    direction.normalize();
 
-    moveVector.current.normalize();
-
-    // Apply acceleration
-    if (moveVector.current.lengthSq() > 0) {
-      velocity.current.add(
-        moveVector.current.multiplyScalar(acceleration * currentSpeed)
-      );
+    // Apply movement
+    if (moveState.current.forward) {
+      camera.position.addScaledVector(direction, currentSpeed);
     }
-
-    // Apply deceleration
-    velocity.current.multiplyScalar(deceleration);
-
-    // Clamp velocity
-    if (velocity.current.lengthSq() > maxVelocity * maxVelocity) {
-      velocity.current.normalize().multiplyScalar(maxVelocity);
+    if (moveState.current.backward) {
+      camera.position.addScaledVector(direction, -currentSpeed);
     }
-
-    // Apply movement with collision check
-    if (velocity.current.lengthSq() > 0.000001) {
-      const movement = velocity.current.clone();
-      
-      if (!checkCollision(movement)) {
-        camera.position.add(movement);
-      } else {
-        velocity.current.set(0, 0, 0);
-      }
+    if (moveState.current.left) {
+      camera.position.addScaledVector(sideVector, -currentSpeed);
+    }
+    if (moveState.current.right) {
+      camera.position.addScaledVector(sideVector, currentSpeed);
     }
   });
 
   return (
     <PointerLockControls 
-      ref={controlsRef as any} // Type assertion to fix compatibility
+      ref={controlsRef as any}
       onUnlock={() => {
         const startExploring = document.getElementById('startExploring');
         if (startExploring) startExploring.style.display = 'flex';
       }}
     />
   );
-}
+};
 
 // Enhanced Model component with loading state
 function Model({ url, position, id, isAvailable, onSelect }: { 
@@ -199,10 +196,16 @@ function Model({ url, position, id, isAvailable, onSelect }: {
           
           if (id) {
             if (isAvailable) {
-              child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
-              child.material.emissiveIntensity = hovered ? 0.5 : 0.3;
+              // Highlight stools differently when they're available
+              if (id.startsWith('stool')) {
+                child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
+                child.material.emissiveIntensity = hovered ? 0.7 : 0.5; // Make stools more visible
+              } else {
+                child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
+                child.material.emissiveIntensity = hovered ? 0.5 : 0.3;
+              }
             } else {
-              child.material.emissive = new THREE.Color(0x440000);
+              child.material.emissive = new THREE.Color(0xff9999);
               child.material.emissiveIntensity = 0.3;
             }
           }
@@ -252,7 +255,7 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
       onLoadingChange(true);
       const timeout = setTimeout(() => {
         onLoadingChange(false);
-      }, 2000);
+      }, 0);
       return () => clearTimeout(timeout);
     }
   }, [onLoadingChange]);
@@ -274,8 +277,14 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
           <pointLight position={[0, 4, 0]} intensity={0.5} castShadow />
           <hemisphereLight intensity={0.5} />
           
-          {/* Base model */}
+          {/* Base models */}
           <Model url="/models/base/base.gltf" />
+
+          <Model url="/models/stage/stage.gltf" />
+
+          <Model url="/models/counter/counter.gltf" />
+
+          <Model url="/models/art/art.gltf" />
           
           {/* Interactive models */}
           <Model 
@@ -332,7 +341,7 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
             isAvailable={availableSeats.includes('stool3')}
             onSelect={onSeatSelect}
           />
-          <Preload all />
+          {/* <Preload all /> */}
         </Suspense>
         <FirstPersonController />
       </Canvas>

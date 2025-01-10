@@ -49,7 +49,7 @@ const DashboardHero = () => {
   };
 
  return (
-   <div className="w-full h-[50vh] bg-red-500 relative overflow-hidden">
+   <div className="w-full h-[50vh] bg-c7 relative overflow-hidden">
      <div className="absolute inset-0">
        {slides.map((slide, index) => (
          <div
@@ -67,7 +67,7 @@ const DashboardHero = () => {
                 </p>
                 <button 
                 onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                className="bg-black text-white px-6 py-3 rounded-md font-medium hover:bg-gray-800 transition-colors"
+                className="bg-c8 text-white px-6 py-3 rounded-md font-medium hover:bg-c9 transition-colors"
                 >
                 Reserve a Table
                 </button>
