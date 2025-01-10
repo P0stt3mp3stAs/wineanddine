@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       date,
       startTime,
       endTime,
-      reservationType
+      
     );
 
     // Create set of reserved seat IDs
