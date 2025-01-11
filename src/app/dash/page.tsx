@@ -11,7 +11,7 @@ import MenuPreview from '@/components/menu/MenuPreview';
 //   username: string | null;
 // }
 
-export default function Dashboard() {
+export default function Dash() {
   // const router = useRouter();
   // const [userInfo, setUserInfo] = useState<UserInfo>({ email: null, username: null });
 
