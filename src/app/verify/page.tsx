@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { confirmSignUp, signIn } from 'aws-amplify/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 
-export default function Verify() {
+function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -38,6 +38,9 @@ export default function Verify() {
       const signInResult = await signIn({
         username: formData.email,
         password: formData.password,
+        options: {
+          authFlowType: "USER_PASSWORD_AUTH"
+        }
       });
 
       if (signInResult.isSignedIn) {
@@ -115,5 +118,17 @@ export default function Verify() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    }>
+      <VerifyContent />
+    </Suspense>
   );
 }
