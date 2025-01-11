@@ -6,6 +6,28 @@ import {
   AuthenticationDetails,
   CognitoUserAttribute
 } from 'amazon-cognito-identity-js';
+import { getCurrentUser, signOut } from 'aws-amplify/auth';
+import { configureAmplify } from '@/lib/auth-config';
+
+export async function checkAuthStatus() {
+  try {
+    configureAmplify();
+    const currentUser = await getCurrentUser();
+    return currentUser;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function handleSignOut() {
+  try {
+    await signOut({ global: true });
+    return true;
+  } catch (error) {
+    console.error('Error signing out:', error);
+    return false;
+  }
+}
 
 // Configure Amplify
 const amplifyConfig = {

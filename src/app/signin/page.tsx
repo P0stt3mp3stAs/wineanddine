@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signIn } from 'aws-amplify/auth';
+import { signIn, signOut, getCurrentUser } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 
@@ -11,21 +11,36 @@ export default function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
         configureAmplify();
+        
+        // Check if user is already signed in
+        try {
+          const currentUser = await getCurrentUser();
+          if (currentUser) {
+            // If user is already signed in, redirect to dashboard
+            router.push('/dashboard');
+            return;
+          }
+        } catch (e) {
+          // No user is signed in, continue with sign in page
+        }
+        
         setIsConfigured(true);
       } catch (error) {
         console.error('Failed to configure Amplify:', error);
         setError('Authentication system initialization failed');
+      } finally {
+        setLoading(false);
       }
     };
 
     initializeAuth();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,6 +53,14 @@ export default function SignIn() {
     setError('');
 
     try {
+      // First try to sign out any existing session
+      try {
+        await signOut({ global: true });
+      } catch (e) {
+        // Ignore sign out errors
+      }
+
+      // Now attempt to sign in
       const signInResult = await signIn({
         username: email,
         password,
@@ -60,6 +83,14 @@ export default function SignIn() {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -84,6 +115,7 @@ export default function SignIn() {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
               />
             </div>
             <div>
@@ -96,6 +128,7 @@ export default function SignIn() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
               />
             </div>
           </div>
