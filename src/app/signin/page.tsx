@@ -7,17 +7,34 @@ import { configureAmplify } from '@/lib/auth-config';
 
 export default function SignIn() {
   const router = useRouter();
+  const [isConfigured, setIsConfigured] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    configureAmplify();
+    console.log('ENV Variables:', {
+      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID
+    });
+    
+    try {
+      configureAmplify();
+      console.log('Amplify configured successfully');
+    } catch (error) {
+      console.error('Amplify configuration error:', error);
+    }
   }, []);
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isConfigured) {
+      setError('Authentication system is not ready');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -25,6 +42,9 @@ export default function SignIn() {
       const signInResult = await signIn({
         username: email,
         password,
+        options: {
+          authFlowType: "USER_PASSWORD_AUTH"
+        }
       });
 
       if (signInResult.isSignedIn) {
