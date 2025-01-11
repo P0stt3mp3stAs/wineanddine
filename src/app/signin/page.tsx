@@ -14,24 +14,23 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log('ENV Variables:', {
-      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
-      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID
-    });
-    
-    try {
-      configureAmplify();
-      console.log('Amplify configured successfully');
-    } catch (error) {
-      console.error('Amplify configuration error:', error);
-    }
+    const initializeAuth = async () => {
+      try {
+        configureAmplify();
+        setIsConfigured(true);
+      } catch (error) {
+        console.error('Failed to configure Amplify:', error);
+        setError('Authentication system initialization failed');
+      }
+    };
+
+    initializeAuth();
   }, []);
-  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isConfigured) {
-      setError('Authentication system is not ready');
+      setError('Please wait while the authentication system initializes...');
       return;
     }
 
@@ -49,7 +48,6 @@ export default function SignIn() {
 
       if (signInResult.isSignedIn) {
         router.push('/dashboard');
-        router.refresh();
       }
     } catch (err: any) {
       console.error('Sign in error:', err);
@@ -105,7 +103,7 @@ export default function SignIn() {
           <div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !isConfigured}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
               {loading ? 'Signing in...' : 'Sign in'}

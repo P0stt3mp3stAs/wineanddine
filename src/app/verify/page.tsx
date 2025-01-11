@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { confirmSignUp, signIn } from 'aws-amplify/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 
-function VerifyContent() {
+export default function VerifyPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isConfigured, setIsConfigured] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     code: '',
@@ -17,15 +18,30 @@ function VerifyContent() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    configureAmplify();
-    const email = searchParams.get('email');
-    if (email) {
-      setFormData(prev => ({ ...prev, email }));
-    }
+    const initializeAuth = async () => {
+      try {
+        configureAmplify();
+        setIsConfigured(true);
+        const email = searchParams.get('email');
+        if (email) {
+          setFormData(prev => ({ ...prev, email }));
+        }
+      } catch (error) {
+        console.error('Failed to configure Amplify:', error);
+        setError('Authentication system initialization failed');
+      }
+    };
+
+    initializeAuth();
   }, [searchParams]);
 
   const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!isConfigured) {
+      setError('Please wait while the authentication system initializes...');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -45,7 +61,6 @@ function VerifyContent() {
 
       if (signInResult.isSignedIn) {
         router.push('/dashboard');
-        router.refresh();
       }
     } catch (err: any) {
       console.error('Verification error:', err);
