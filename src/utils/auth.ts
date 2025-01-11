@@ -1,33 +1,14 @@
-// src/utils/auth.js
 import { Amplify } from 'aws-amplify';
 import { 
   CognitoUserPool, 
   CognitoUser, 
   AuthenticationDetails,
-  CognitoUserAttribute
+  CognitoUserAttribute,
+  ISignUpResult,
+  ICognitoUserData
 } from 'amazon-cognito-identity-js';
-import { getCurrentUser, signOut } from 'aws-amplify/auth';
+import { signIn as amplifySignIn, signUp as amplifySignUp, signOut as amplifySignOut, getCurrentUser as amplifyGetCurrentUser } from 'aws-amplify/auth';
 import { configureAmplify } from '@/lib/auth-config';
-
-export async function checkAuthStatus() {
-  try {
-    configureAmplify();
-    const currentUser = await getCurrentUser();
-    return currentUser;
-  } catch (error) {
-    return null;
-  }
-}
-
-export async function handleSignOut() {
-  try {
-    await signOut({ global: true });
-    return true;
-  } catch (error) {
-    console.error('Error signing out:', error);
-    return false;
-  }
-}
 
 // Configure Amplify
 const amplifyConfig = {
@@ -51,7 +32,16 @@ const poolConfig = {
 
 const userPool = new CognitoUserPool(poolConfig);
 
-export const signUp = async (email, password, username) => {
+interface SignUpResponse {
+  user?: CognitoUser;
+  error?: Error;
+}
+
+export const signUp = async (
+  email: string, 
+  password: string, 
+  username: string
+): Promise<SignUpResponse> => {
   return new Promise((resolve, reject) => {
     const attributeList = [
       new CognitoUserAttribute({ Name: 'email', Value: email }),
@@ -65,43 +55,70 @@ export const signUp = async (email, password, username) => {
       [],
       (err, result) => {
         if (err) {
-          reject(err);
+          reject({ error: err });
           return;
         }
-        resolve(result?.user);
+        resolve({ user: result?.user });
       }
     );
   });
 };
 
-export const verifyAccount = async (email, code) => {
+interface VerifyResponse {
+  success: boolean;
+  message: string;
+}
+
+export const verifyAccount = async (
+  email: string, 
+  code: string
+): Promise<VerifyResponse> => {
   return new Promise((resolve, reject) => {
-    const cognitoUser = new CognitoUser({
+    const userData: ICognitoUserData = {
       Username: email,
       Pool: userPool
-    });
+    };
+
+    const cognitoUser = new CognitoUser(userData);
 
     cognitoUser.confirmRegistration(code, true, (err, result) => {
       if (err) {
-        reject(err);
+        reject({ success: false, message: err.message });
         return;
       }
-      resolve(result);
+      resolve({ success: true, message: result });
     });
   });
 };
 
-export const signIn = async (email, password) => {
+interface AuthTokens {
+  accessToken: string;
+  idToken: string;
+  refreshToken: string;
+}
+
+interface SignInResponse {
+  success: boolean;
+  tokens?: AuthTokens;
+  error?: Error;
+}
+
+export const signIn = async (
+  email: string, 
+  password: string
+): Promise<SignInResponse> => {
   return new Promise((resolve, reject) => {
     const authenticationDetails = new AuthenticationDetails({
       Username: email,
       Password: password,
     });
 
-    const cognitoUser = new CognitoUser({
+    const userData: ICognitoUserData = {
       Username: email,
       Pool: userPool
-    });
+    };
+
+    const cognitoUser = new CognitoUser(userData);
 
     cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (result) => {
@@ -117,17 +134,24 @@ export const signIn = async (email, password) => {
           localStorage.setItem('refreshToken', tokens.refreshToken);
         }
         
-        resolve(result);
+        resolve({ success: true, tokens });
       },
       onFailure: (err) => {
-        reject(err);
+        reject({ success: false, error: err });
       },
     });
   });
 };
 
-export const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
+interface UserAttributes {
+  id?: string;
+  email?: string;
+  username?: string;
+  isVerified: boolean;
+}
+
+export const getCurrentUser = async (): Promise<UserAttributes | null> => {
+  return new Promise((resolve) => {
     const cognitoUser = userPool.getCurrentUser();
     
     if (!cognitoUser) {
@@ -135,9 +159,9 @@ export const getCurrentUser = () => {
       return;
     }
 
-    cognitoUser.getSession((err, session) => {
+    cognitoUser.getSession((err: Error | null, session: any) => {
       if (err) {
-        reject(err);
+        resolve(null);
         return;
       }
       
@@ -148,7 +172,7 @@ export const getCurrentUser = () => {
 
       cognitoUser.getUserAttributes((err, attributes) => {
         if (err) {
-          reject(err);
+          resolve(null);
           return;
         }
         
@@ -168,7 +192,7 @@ export const getCurrentUser = () => {
   });
 };
 
-export const signOut = () => {
+export const signOut = (): void => {
   const cognitoUser = userPool.getCurrentUser();
   if (cognitoUser) {
     cognitoUser.signOut();
@@ -178,17 +202,25 @@ export const signOut = () => {
   }
 };
 
-export const isAuthenticated = () => {
+export const isAuthenticated = (): boolean => {
   if (typeof window === 'undefined') return false;
   return localStorage.getItem('accessToken') !== null;
 };
 
-export const checkUsernameAvailability = async (username) => {
+export const checkUsernameAvailability = async (username: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
+    const poolData = {
+      UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID || '',
+      ClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID || ''
+    };
+
+    const userPool = new CognitoUserPool(poolData);
+
+    // @ts-ignore - The types for listUsers are incorrect in the SDK
     userPool.listUsers({
       Filter: `preferred_username = "${username}"`,
       Limit: 1
-    }, (err, data) => {
+    }, (err: Error | null, data: any) => {
       if (err) {
         reject(err);
         return;
@@ -197,6 +229,63 @@ export const checkUsernameAvailability = async (username) => {
     });
   });
 };
+
+export async function checkAuthStatus() {
+  try {
+    configureAmplify();
+    const currentUser = await amplifyGetCurrentUser();
+    return currentUser;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function handleSignOut(): Promise<boolean> {
+  try {
+    await amplifySignOut({ global: true });
+    return true;
+  } catch (error) {
+    console.error('Error signing out:', error);
+    return false;
+  }
+}
+
+export async function handleSignIn(email: string, password: string) {
+  try {
+    const signInResult = await amplifySignIn({
+      username: email,
+      password,
+      options: {
+        authFlowType: "USER_PASSWORD_AUTH"
+      }
+    });
+    return signInResult;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function handleSignUp(
+  email: string, 
+  password: string, 
+  username: string
+) {
+  try {
+    const { isSignUpComplete, userId } = await amplifySignUp({
+      username: email,
+      password,
+      options: {
+        userAttributes: {
+          email,
+          preferred_username: username
+        }
+      }
+    });
+    return { isSignUpComplete, userId };
+  } catch (error) {
+    throw error;
+  }
+}
 
 // Export getCurrentUser from Amplify for server-side use
 export { getCurrentUser as getServerUser } from 'aws-amplify/auth';

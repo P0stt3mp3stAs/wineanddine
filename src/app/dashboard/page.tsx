@@ -6,9 +6,17 @@ import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 import { handleSignOut } from '@/utils/auth';
 
+interface UserInfo {
+  email: string | null;
+  username: string | null;
+}
+
 export default function Dashboard() {
   const router = useRouter();
-  const [userInfo, setUserInfo] = useState({ email: null, username: null });
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    email: null,
+    username: null
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

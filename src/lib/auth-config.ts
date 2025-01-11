@@ -4,13 +4,15 @@ import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito';
 export function configureAmplify() {
   if (
     !process.env.NEXT_PUBLIC_USER_POOL_ID ||
-    !process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID
+    !process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID ||
+    !process.env.NEXT_PUBLIC_AWS_REGION
   ) {
     console.error('AWS Cognito credentials are not properly configured');
     return;
   }
 
   try {
+    // Configure Amplify
     Amplify.configure({
       Auth: {
         Cognito: {
@@ -24,20 +26,27 @@ export function configureAmplify() {
           }
         }
       }
+    }, {
+      ssr: true
     });
 
     // Configure token storage
     cognitoUserPoolsTokenProvider.setKeyValueStorage({
       getItem: (key: string) => {
         try {
-          return Promise.resolve(localStorage.getItem(key));
+          if (typeof window !== 'undefined') {
+            return Promise.resolve(localStorage.getItem(key));
+          }
+          return Promise.resolve(null);
         } catch {
           return Promise.resolve(null);
         }
       },
       setItem: (key: string, value: string) => {
         try {
-          localStorage.setItem(key, value);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(key, value);
+          }
           return Promise.resolve();
         } catch {
           return Promise.resolve();
@@ -45,7 +54,9 @@ export function configureAmplify() {
       },
       removeItem: (key: string) => {
         try {
-          localStorage.removeItem(key);
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem(key);
+          }
           return Promise.resolve();
         } catch {
           return Promise.resolve();
@@ -53,7 +64,9 @@ export function configureAmplify() {
       },
       clear: () => {
         try {
-          localStorage.clear();
+          if (typeof window !== 'undefined') {
+            localStorage.clear();
+          }
           return Promise.resolve();
         } catch {
           return Promise.resolve();
