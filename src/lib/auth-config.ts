@@ -1,7 +1,11 @@
 import { Amplify } from 'aws-amplify';
 import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito';
 
+let isConfigured = false;
+
 export function configureAmplify() {
+  if (isConfigured) return;
+
   if (
     !process.env.NEXT_PUBLIC_USER_POOL_ID ||
     !process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID ||
@@ -74,8 +78,19 @@ export function configureAmplify() {
       }
     });
 
+    isConfigured = true;
     console.log('Amplify configured successfully');
   } catch (error) {
     console.error('Error configuring Amplify:', error);
+    isConfigured = false;
   }
+}
+
+export function getAuthConfig() {
+  return {
+    isConfigured,
+    userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+    userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+    region: process.env.NEXT_PUBLIC_AWS_REGION
+  };
 }
