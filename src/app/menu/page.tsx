@@ -151,22 +151,22 @@ export default function Menu() {
         />
         
         <MenuSection
-          title="Main Courses"
-          items={menuData.mains}
-          theme={{ 
-            backgroundColor: 'bg-blue-50', 
-            titleColor: 'text-blue-800', 
-            textColor: 'text-blue-700' 
-          }}
-        />
-        
-        <MenuSection
           title="Premium Steaks"
           items={menuData.steaks}
           theme={{ 
             backgroundColor: 'bg-red-50', 
             titleColor: 'text-red-800', 
             textColor: 'text-red-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Main Courses"
+          items={menuData.mains}
+          theme={{ 
+            backgroundColor: 'bg-blue-50', 
+            titleColor: 'text-blue-800', 
+            textColor: 'text-blue-700' 
           }}
         />
         
