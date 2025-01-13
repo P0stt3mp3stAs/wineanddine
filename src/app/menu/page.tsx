@@ -99,16 +99,6 @@ export default function Menu() {
         />
         
         <MenuSection
-          title="Snacks & Starters"
-          items={menuData.snacks_and_starters}  // Updated to match database table name
-          theme={{ 
-            backgroundColor: 'bg-purple-50', 
-            titleColor: 'text-purple-800', 
-            textColor: 'text-purple-700' 
-          }}
-        />
-        
-        <MenuSection
           title="Fresh Salads"
           items={menuData.salads}
           theme={{ 
@@ -139,22 +129,32 @@ export default function Menu() {
         />
         
         <MenuSection
-          title="Side Dishes"
-          items={menuData.sides}
-          theme={{ 
-            backgroundColor: 'bg-orange-50', 
-            titleColor: 'text-orange-800', 
-            textColor: 'text-orange-700' 
-          }}
-        />
-        
-        <MenuSection
           title="Desserts"
           items={menuData.desserts}
           theme={{ 
             backgroundColor: 'bg-pink-50', 
             titleColor: 'text-pink-800', 
             textColor: 'text-pink-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Snacks & Starters"
+          items={menuData.snacks_and_starters}  // Updated to match database table name
+          theme={{ 
+            backgroundColor: 'bg-purple-50', 
+            titleColor: 'text-purple-800', 
+            textColor: 'text-purple-700' 
+          }}
+        />
+        
+        <MenuSection
+          title="Side Dishes"
+          items={menuData.sides}
+          theme={{ 
+            backgroundColor: 'bg-orange-50', 
+            titleColor: 'text-orange-800', 
+            textColor: 'text-orange-700' 
           }}
         />
         

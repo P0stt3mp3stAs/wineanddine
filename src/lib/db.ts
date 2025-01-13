@@ -5,13 +5,19 @@ import { Pool } from 'pg';
 let pool: Pool;
 
 function createPool() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is not defined in environment variables');
+  }
+
   return new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: false
     },
     max: 10,
-    idleTimeoutMillis: 30000
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000, // Add connection timeout
+    keepAlive: true // Enable keepalive
   });
 }
 
@@ -29,7 +35,26 @@ export async function query(text: string, params?: Array<string | number>) {
       client.release();
     }
   } catch (error) {
-    console.error('Database query error:', error);
+    console.error('Database query error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      query: text,
+      params: params
+    });
+    
+    // Check for specific connection errors
+    if (error instanceof Error) {
+      if (error.message.includes('ECONNREFUSED')) {
+        console.error('Unable to connect to database. Please check:');
+        console.error('1. Database URL is correct');
+        console.error('2. RDS security group allows inbound from your IP');
+        console.error('3. Database instance is running');
+      }
+      if (error.message.includes('password authentication failed')) {
+        console.error('Authentication failed. Check database credentials.');
+      }
+    }
+    
     throw error;
   }
 }
