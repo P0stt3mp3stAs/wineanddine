@@ -1,7 +1,7 @@
 'use client';
 
 import ModelViewer from '@/components/ModelViewer';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 interface AvailabilityData {
@@ -9,7 +9,8 @@ interface AvailabilityData {
   success: boolean;
 }
 
-export default function SeatsPage() {
+// Separate the main content into a client component
+function SeatsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [availableSeats, setAvailableSeats] = useState<string[]>([]);
@@ -22,7 +23,6 @@ export default function SeatsPage() {
   const endTime = searchParams.get('endTime');
   const guestCount = searchParams.get('guestCount');
 
-  // Memoize the availability check
   useEffect(() => {
     const checkAvailability = async () => {
       try {
@@ -60,7 +60,7 @@ export default function SeatsPage() {
     };
 
     checkAvailability();
-  }, [date, startTime, endTime, guestCount, reservationType]);
+  }, [date, startTime, endTime, guestCount, reservationType, searchParams]);
 
   const handleSeatSelect = (seatId: string) => {
     const params = new URLSearchParams();
@@ -73,21 +73,6 @@ export default function SeatsPage() {
 
     router.push(`/seats/confirm?${params.toString()}`);
   };
-
-  // Loading screen with animation
-  // if (modelLoading) {
-  //   return (
-  //     <div className="fixed inset-0 bg-black flex items-center justify-center">
-  //       <div className="text-center">
-  //         <div className="w-32 h-32 border-t-4 border-b-4 border-green-500 rounded-full animate-spin mb-4"></div>
-  //         <h2 className="text-white text-xl font-semibold">
-  //           Loading 3D environment...
-  //         </h2>
-  //         <p className="text-gray-400 mt-2">Please wait a moment</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <main className="h-screen flex flex-col relative">
@@ -149,5 +134,29 @@ export default function SeatsPage() {
         />
       </div>
     </main>
+  );
+}
+
+// Loading component
+function LoadingFallback() {
+  return (
+    <div className="fixed inset-0 bg-black flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-32 h-32 border-t-4 border-b-4 border-green-500 rounded-full animate-spin mb-4"></div>
+        <h2 className="text-white text-xl font-semibold">
+          Loading environment...
+        </h2>
+        <p className="text-gray-400 mt-2">Please wait a moment</p>
+      </div>
+    </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function SeatsPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <SeatsContent />
+    </Suspense>
   );
 }
