@@ -64,7 +64,7 @@ export async function checkSeatAvailability(
   date: string,
   startTime: string,
   endTime: string,
-  // reservationType: 'drink-only' | 'dine-and-eat'
+  reservationType: 'drink-only' | 'dine-and-eat'
 ) {
   const text = `
     SELECT seat_id 

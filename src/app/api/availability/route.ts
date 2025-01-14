@@ -11,10 +11,10 @@ interface SeatConfig {
 }
 
 const SEATS_CONFIG: Record<string, SeatConfig> = {
-  stool: { capacity: 1, type: 'drinks-only' },
-  stool1: { capacity: 1, type: 'drinks-only' },
-  stool2: { capacity: 1, type: 'drinks-only' },
-  stool3: { capacity: 1, type: 'drinks-only' },
+  stool: { capacity: 2, type: 'drinks-only' },
+  stool1: { capacity: 2, type: 'drinks-only' },
+  stool2: { capacity: 2, type: 'drinks-only' },
+  stool3: { capacity: 2, type: 'drinks-only' },
   '2table': { capacity: 2, type: 'both' },
   '2table1': { capacity: 2, type: 'both' },
   '4table': { capacity: 4, type: 'both' },

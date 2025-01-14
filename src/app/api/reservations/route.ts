@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server';
 import { Pool, QueryResult } from 'pg';
 
-// Define interfaces for better type safety
 interface ReservationData {
   userId: string;
   selectedSeat: string;
@@ -19,20 +18,36 @@ interface DatabaseError {
 }
 
 export async function POST(request: Request) {
+  // Create pool with connection string
   const pool = new Pool({
-    user: 'elghali',
-    host: 'database-instance.cposom22eqj3.us-east-1.rds.amazonaws.com',
-    database: 'database_name',
-    password: 'SecurePass123!',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: false
     }
   });
 
   try {
+    // Validate request content-type
+    const contentType = request.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      return NextResponse.json({ 
+        success: false, 
+        error: 'Content-type must be application/json' 
+      }, { status: 400 });
+    }
+
     const body = await request.json() as ReservationData;
-    console.log('Received data:', body);
+    
+    // Validate required fields
+    const requiredFields = ['userId', 'selectedSeat', 'date', 'startTime', 'endTime', 'guestCount', 'reservationType'];
+    const missingFields = requiredFields.filter(field => !body[field as keyof ReservationData]);
+    
+    if (missingFields.length > 0) {
+      return NextResponse.json({ 
+        success: false, 
+        error: `Missing required fields: ${missingFields.join(', ')}` 
+      }, { status: 400 });
+    }
 
     const {
       userId,
@@ -80,7 +95,6 @@ export async function POST(request: Request) {
   } catch (error: unknown) {
     console.error('Error:', error);
     
-    // Type guard for error handling
     let errorMessage = 'An unknown error occurred';
     if (error instanceof Error) {
       errorMessage = error.message;

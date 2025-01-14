@@ -47,7 +47,7 @@ export default function ConfirmPage() {
       const response = await fetch('/api/reservations', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           userId,
@@ -59,17 +59,17 @@ export default function ConfirmPage() {
           reservationType
         })
       });
-
+      
       const data = await response.json();
       
       if (!data.success) {
         throw new Error(data.error || 'Failed to create reservation');
       }
 
-      // router.push('/menu');
-      // router.refresh();
-       // Or alternatively:
-       window.location.href = '/menu';
+      router.push('/menu');
+      router.refresh();
+      //  Or alternatively:
+      //  window.location.href = '/menu';
 
     } catch (error) {
       console.error('Error:', error);
