@@ -43,46 +43,43 @@ export default function SignIn() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!isConfigured) {
-      setError('Please wait while the authentication system initializes...');
-      return;
-    }
+  e.preventDefault();
+  setLoading(true);
+  setError('');
 
-    setLoading(true);
-    setError('');
-
-    try {
-      // First try to sign out any existing session
-      try {
-        await signOut({ global: true });
-      } catch (e) {
-        // Ignore sign out errors
+  try {
+    console.log('Starting sign in...');
+    const signInResult = await signIn({
+      username: email,
+      password,
+      options: {
+        authFlowType: "USER_PASSWORD_AUTH"
       }
+    });
 
-      // Now attempt to sign in
-      const signInResult = await signIn({
-        username: email,
-        password,
-        options: {
-          authFlowType: "USER_PASSWORD_AUTH"
-        }
+    console.log('Sign in result:', signInResult);
+
+    if (signInResult.isSignedIn) {
+      // Let's check if we actually have a user after sign in
+      const user = await getCurrentUser();
+      console.log('Current user after sign in:', user);
+      
+      // Let's also check local storage
+      console.log('Local storage tokens:', {
+        accessToken: localStorage.getItem('accessToken'),
+        idToken: localStorage.getItem('idToken')
       });
 
-      if (signInResult.isSignedIn) {
-        router.push('/dashboard');
-      }
-    } catch (err: any) {
-      console.error('Sign in error:', err);
-      if (err.name === 'UserNotConfirmedException') {
-        router.push(`/verify?email=${encodeURIComponent(email)}`);
-        return;
-      }
-      setError(err.message || 'Failed to sign in. Please try again.');
-    } finally {
-      setLoading(false);
+      window.location.href = '/dashboard';
+      return;
     }
-  };
+  } catch (err) {
+    console.error('Sign in error:', err);
+    setError((err as any).message || 'Failed to sign in');
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading) {
     return (
@@ -110,6 +107,7 @@ export default function SignIn() {
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="username"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
@@ -123,6 +121,7 @@ export default function SignIn() {
                 id="password"
                 name="password"
                 type="password"
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
@@ -141,6 +140,17 @@ export default function SignIn() {
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
+          </div>
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <button
+                onClick={() => router.push('/signup')}
+                className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
+              >
+                Sign up
+              </button>
+            </p>
           </div>
         </form>
       </div>

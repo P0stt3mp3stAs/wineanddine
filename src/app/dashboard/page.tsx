@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 import { handleSignOut } from '@/utils/auth';
@@ -22,21 +22,32 @@ export default function Dashboard() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log('Dashboard - Starting auth check');
         configureAmplify();
+        
+        // Try to get session first
+        const session = await fetchAuthSession();
+        console.log('Dashboard - Auth session:', session);
+        
         const currentUser = await getCurrentUser();
+        console.log('Dashboard - Current user:', currentUser);
+
         if (currentUser) {
           setUserInfo({
             email: currentUser.username || null,
             username: currentUser.username || null
           });
+          setIsLoading(false);
         } else {
+          console.log('Dashboard - No user found');
           throw new Error('No user found');
         }
       } catch (error) {
-        console.log('No user is logged in, redirecting to signin');
-        router.push('/signin');
-      } finally {
-        setIsLoading(false);
+        console.error('Dashboard - Auth check error:', error);
+        // Add a delay before redirect to see logs
+        setTimeout(() => {
+          router.push('/signin');
+        }, 1000);
       }
     };
 
@@ -56,9 +67,9 @@ export default function Dashboard() {
     );
   }
 
-  if (!userInfo.email) {
-    return null;
-  }
+  // if (!userInfo.email) {
+  //   return null;
+  // }
 
   return (
     <main className="min-h-screen p-4">

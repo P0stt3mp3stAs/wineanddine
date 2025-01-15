@@ -34,6 +34,13 @@ export function configureAmplify() {
       ssr: true
     });
 
+    // Add debug logging
+    console.log('Amplify configured with:', {
+      userPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID,
+      userPoolClientId: process.env.NEXT_PUBLIC_USER_POOL_CLIENT_ID,
+      region: process.env.NEXT_PUBLIC_AWS_REGION
+    });
+
     // Configure token storage
     cognitoUserPoolsTokenProvider.setKeyValueStorage({
       getItem: (key: string) => {
@@ -82,7 +89,8 @@ export function configureAmplify() {
     console.log('Amplify configured successfully');
   } catch (error) {
     console.error('Error configuring Amplify:', error);
-    isConfigured = false;
+    // isConfigured = false;
+    throw error;
   }
 }
 

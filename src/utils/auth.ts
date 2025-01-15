@@ -7,7 +7,13 @@ import {
   ISignUpResult,
   ICognitoUserData
 } from 'amazon-cognito-identity-js';
-import { signIn as amplifySignIn, signUp as amplifySignUp, signOut as amplifySignOut, getCurrentUser as amplifyGetCurrentUser } from 'aws-amplify/auth';
+import { 
+  signIn as amplifySignIn, 
+  signUp as amplifySignUp, 
+  signOut as amplifySignOut, 
+  getCurrentUser as amplifyGetCurrentUser,
+  fetchAuthSession
+} from 'aws-amplify/auth';
 import { configureAmplify } from '@/lib/auth-config';
 
 // Configure Amplify
@@ -252,6 +258,9 @@ export async function handleSignOut(): Promise<boolean> {
 
 export async function handleSignIn(email: string, password: string) {
   try {
+    // Make sure Amplify is configured
+    configureAmplify();
+    
     const signInResult = await amplifySignIn({
       username: email,
       password,
@@ -259,8 +268,27 @@ export async function handleSignIn(email: string, password: string) {
         authFlowType: "USER_PASSWORD_AUTH"
       }
     });
+
+    // If sign in successful, explicitly store tokens
+    if (signInResult.isSignedIn) {
+      const session = await fetchAuthSession();
+      const accessToken = session.tokens?.accessToken;
+      const idToken = session.tokens?.idToken;
+
+      if (accessToken && idToken) {
+        localStorage.setItem('accessToken', accessToken.toString());
+        localStorage.setItem('idToken', idToken.toString());
+        
+        // Also set as cookies with a long expiration (30 days)
+        const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+        document.cookie = `accessToken=${accessToken.toString()}; path=/; expires=${expires}`;
+        document.cookie = `idToken=${idToken.toString()}; path=/; expires=${expires}`;
+      }
+    }
+
     return signInResult;
   } catch (error) {
+    console.error('HandleSignIn error:', error);
     throw error;
   }
 }
