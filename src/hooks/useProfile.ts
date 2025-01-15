@@ -8,7 +8,8 @@ import Cookies from 'js-cookie';
 export interface UserProfile {
   email: string | null;
   username: string | null;
-  profilePicture?: string;
+  // profilePicture?: string;
+  user_id?: string; 
 }
 
 export const useProfile = () => {
@@ -26,6 +27,7 @@ export const useProfile = () => {
         setUserInfo({
           email: attributes.email || null,
           username: attributes['preferred_username'] || null,
+          user_id: currentUser.userId || attributes.sub,
         });
         
         // try {
