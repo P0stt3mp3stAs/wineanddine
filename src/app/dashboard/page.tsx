@@ -5,6 +5,9 @@ import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
 import { handleSignOut } from '@/utils/auth';
+import DashboardHero from '@/components/DashboardHero';
+import ReservationSection from '@/components/ReservationSection';
+import MenuPreview from '@/components/menu/MenuPreview';
 
 interface UserInfo {
   email: string | null;
@@ -72,7 +75,10 @@ export default function Dashboard() {
   // }
 
   return (
-    <main className="min-h-screen p-4">
+    <main className="min-h-screen">
+      <DashboardHero />
+      <MenuPreview />
+      <ReservationSection />
       <div className="max-w-7xl mx-auto">
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-center">
