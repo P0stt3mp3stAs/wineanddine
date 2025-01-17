@@ -17,6 +17,8 @@ const SEATS_CONFIG: Record<string, SeatConfig> = {
   stool3: { capacity: 2, type: 'drinks-only' },
   '2table': { capacity: 2, type: 'both' },
   '2table1': { capacity: 2, type: 'both' },
+  '2table2': { capacity: 2, type: 'both' },
+  '2table3': { capacity: 2, type: 'both' },
   '4table': { capacity: 4, type: 'both' },
   '4table1': { capacity: 4, type: 'both' },
   couch: { capacity: 8, type: 'both' },

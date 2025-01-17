@@ -6,14 +6,14 @@ import {
   PointerLockControls,
   useGLTF,
   Html,
-  Preload,
+  // Preload,
   useProgress
 } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import * as THREE from 'three';
-import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
-import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
-import { group } from 'console';
+// import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
+// import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
+// import { group } from 'console';
 
 interface ModelViewerProps {
   availableSeats?: string[];
@@ -307,6 +307,18 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
             url="/models/2table1/2table1.gltf" 
             id="2table1"
             isAvailable={availableSeats.includes('2table1')}
+            onSelect={onSeatSelect}
+          />
+          <Model 
+            url="/models/2table2/2table2.gltf" 
+            id="2table2"
+            isAvailable={availableSeats.includes('2table2')}
+            onSelect={onSeatSelect}
+          />
+          <Model 
+            url="/models/2table3/2table3.gltf" 
+            id="2table3"
+            isAvailable={availableSeats.includes('2table3')}
             onSelect={onSeatSelect}
           />
           <Model 
