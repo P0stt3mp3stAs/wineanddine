@@ -261,9 +261,10 @@ function Model({ url, position, id, isAvailable, onSelect }: ModelProps) {
       <group 
         position={position}
         ref={meshRef}
-        onClick={(event) => {
-          if (id && isAvailable && onSelect) {
-            event.stopPropagation();
+        onClick={() => {
+        // onClick={(event) => {
+          if (id && isAvailable && hovered && onSelect) {
+            // event.stopPropagation();
             onSelect(id);
           }
         }}
