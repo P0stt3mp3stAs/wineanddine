@@ -11,22 +11,9 @@ import {
 } from '@react-three/drei';
 import dynamic from 'next/dynamic';
 import * as THREE from 'three';
-import { Environment, ContactShadows } from '@react-three/drei';
-import { EffectComposer, SSAO, Bloom } from '@react-three/postprocessing';
-// import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
-// import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
-// import { group } from 'console';
-
-const Crosshair: React.FC = () => {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-4 h-4 flex items-center justify-center">
-        <div className="absolute w-4 h-0.5 bg-black opacity-70"></div>
-        <div className="absolute w-0.5 h-4 bg-black opacity-70"></div>
-      </div>
-    </div>
-  );
-};
+import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
+import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
+import { group } from 'console';
 
 interface ModelViewerProps {
   availableSeats?: string[];
@@ -203,52 +190,27 @@ function Model({ url, position, id, isAvailable, onSelect }: ModelProps) {
   const { scene } = useGLTF(url);
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Group>(null);
-  const { camera } = useThree();
-  
-  // Create a raycaster for center screen detection
-  const raycaster = new THREE.Raycaster();
-  const center = new THREE.Vector2(0, 0); // Center of screen
-
-  useFrame(() => {
-    if (meshRef.current && id && isAvailable) {
-      // Update raycaster with center screen position
-      raycaster.setFromCamera(center, camera);
-      
-      // Check for intersection with the model
-      const intersects = raycaster.intersectObject(meshRef.current, true);
-      
-      // Update hover state based on intersection
-      setHovered(intersects.length > 0);
-    }
-  });
   
   useEffect(() => {
     if (meshRef.current) {
       meshRef.current.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          // Enable shadows
           child.castShadow = true;
           child.receiveShadow = true;
           
-          // Improve material quality
-          if (child.material) {
-            child.material.roughness = 0.7;
-            child.material.metalness = 0.3;
-            child.material.envMapIntensity = 1;
-            
-            if (id) {
-              if (isAvailable) {
-                if (id.startsWith('stool')) {
-                  child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
-                  child.material.emissiveIntensity = hovered ? 0.3 : 0.1;
-                } else {
-                  child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
-                  child.material.emissiveIntensity = hovered ? 0.2 : 0.1;
-                }
+          if (id) {
+            if (isAvailable) {
+              // Highlight stools differently when they're available
+              if (id.startsWith('stool')) {
+                child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
+                child.material.emissiveIntensity = hovered ? 0.7 : 0.5; // Make stools more visible
               } else {
-                child.material.emissive = new THREE.Color(0xff9999);
-                child.material.emissiveIntensity = 0.1;
+                child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
+                child.material.emissiveIntensity = hovered ? 0.5 : 0.3;
               }
+            } else {
+              child.material.emissive = new THREE.Color(0xff9999);
+              child.material.emissiveIntensity = 0.3;
             }
           }
         }
@@ -261,10 +223,9 @@ function Model({ url, position, id, isAvailable, onSelect }: ModelProps) {
       <group 
         position={position}
         ref={meshRef}
-        onClick={() => {
-        // onClick={(event) => {
-          if (id && isAvailable && hovered && onSelect) {
-            // event.stopPropagation();
+        onClick={(event) => {
+          if (id && isAvailable && onSelect) {
+            event.stopPropagation();
             onSelect(id);
           }
         }}
@@ -313,62 +274,12 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
           far: 1000,
           position: [0, 0.7, 0]
         }}
-        gl={{
-          antialias: true,
-          toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1,
-          outputEncoding: THREE.sRGBEncoding
-        }}
       >
         <Suspense fallback={null}>
-          {/* Improved lighting setup */}
-          <ambientLight intensity={0.3} />
-          <directionalLight 
-            position={[5, 5, 5]} 
-            intensity={0.5} 
-            castShadow 
-            shadow-mapSize={[1024, 1024]}
-          />
-          <spotLight 
-            position={[0, 4, 0]} 
-            intensity={0.3} 
-            castShadow
-            angle={Math.PI / 4}
-            penumbra={0.5}
-          />
-          <hemisphereLight 
-            intensity={0.3} 
-            groundColor={new THREE.Color(0x080820)}
-          />
-
-          {/* Environment and effects */}
-          <Environment preset="apartment"/>
-          <ContactShadows
-            opacity={0.5}
-            scale={10}
-            blur={2}
-            far={10}
-            resolution={256}
-            color="#000000"
-          />
-          
-          <EffectComposer>
-            <SSAO 
-              radius={0.1}
-              intensity={150}
-              luminanceInfluence={0.5}
-              color={new THREE.Color('black')}
-              worldDistanceThreshold={1.0}
-              worldDistanceFalloff={0.1}
-              worldProximityThreshold={1.0}
-              worldProximityFalloff={0.1}
-            />
-            <Bloom 
-              intensity={0.1}
-              luminanceThreshold={0.9}
-              luminanceSmoothing={0.025}
-            />
-          </EffectComposer>
+          {/* Lighting */}
+          <ambientLight intensity={0.8} />
+          <pointLight position={[0, 4, 0]} intensity={0.5} castShadow />
+          <hemisphereLight intensity={0.5} />
           
           {/* Base models */}
           <Model url="/models/base/base.gltf" />
@@ -396,18 +307,6 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
             url="/models/2table1/2table1.gltf" 
             id="2table1"
             isAvailable={availableSeats.includes('2table1')}
-            onSelect={onSeatSelect}
-          />
-          <Model 
-            url="/models/2table2/2table2.gltf" 
-            id="2table2"
-            isAvailable={availableSeats.includes('2table2')}
-            onSelect={onSeatSelect}
-          />
-          <Model 
-            url="/models/2table3/2table3.gltf" 
-            id="2table3"
-            isAvailable={availableSeats.includes('2table3')}
             onSelect={onSeatSelect}
           />
           <Model 
@@ -450,7 +349,6 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
         </Suspense>
         <FirstPersonController />
       </Canvas>
-      <Crosshair />
     </div>
   );
 };

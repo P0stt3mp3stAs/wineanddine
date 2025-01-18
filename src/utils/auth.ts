@@ -160,54 +160,39 @@ export const getCurrentUser = async (): Promise<UserAttributes | null> => {
   return new Promise((resolve) => {
     const cognitoUser = userPool.getCurrentUser();
     
-    console.log('Current Cognito user:', cognitoUser);
-
     if (!cognitoUser) {
-      console.log('No current user found');
       resolve(null);
       return;
     }
 
     cognitoUser.getSession((err: Error | null, session: any) => {
       if (err) {
-        console.log('Session error:', err);
         resolve(null);
         return;
       }
       
       if (!session.isValid()) {
-        console.log('Session is invalid');
         resolve(null);
         return;
       }
 
       cognitoUser.getUserAttributes((err, attributes) => {
         if (err) {
-          console.log('Get attributes error:', err);
           resolve(null);
           return;
         }
         
-        // if (!attributes) {
-        //   resolve(null);
-        //   return;
-        // }
+        if (!attributes) {
+          resolve(null);
+          return;
+        }
 
-        // resolve({
-        //   id: attributes.find(attr => attr.Name === 'sub')?.Value,
-        //   email: attributes.find(attr => attr.Name === 'email')?.Value,
-        //   username: attributes.find(attr => attr.Name === 'preferred_username')?.Value,
-        //   isVerified: session.isValid()
-        // });
-        const userData = {
-          id: attributes?.find(attr => attr.Name === 'sub')?.Value,
-          email: attributes?.find(attr => attr.Name === 'email')?.Value,
-          username: attributes?.find(attr => attr.Name === 'preferred_username')?.Value,
+        resolve({
+          id: attributes.find(attr => attr.Name === 'sub')?.Value,
+          email: attributes.find(attr => attr.Name === 'email')?.Value,
+          username: attributes.find(attr => attr.Name === 'preferred_username')?.Value,
           isVerified: session.isValid()
-        };
-        
-        console.log('User data retrieved:', userData);
-        resolve(userData);
+        });
       });
     });
   });

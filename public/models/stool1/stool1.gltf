@@ -15,38 +15,44 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"stool1",
+			"name":"2",
+			"rotation":[
+				0,
+				0.710159420967102,
+				0,
+				0.7040409445762634
+			],
 			"scale":[
-				0.07969452440738678,
-				0.132061168551445,
-				0.0711166113615036
+				0.38680484890937805,
+				0.38680484890937805,
+				0.38680484890937805
 			],
 			"translation":[
-				1.2499175071716309,
-				0.18886665999889374,
-				0.8142589330673218
+				1.258235216140747,
+				0.0592561811208725,
+				1.2175410985946655
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.069",
+			"name":"HBS_0001_M1.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.32120782136917114,
-					0.15298664569854736,
-					0.07283125817775726,
+					0.10461580753326416,
+					0.10461658239364624,
+					0.10461653769016266,
 					1
 				],
 				"metallicFactor":0,
-				"roughnessFactor":0.5
+				"roughnessFactor":0.4000000059604645
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"Cube.006",
+			"name":"HBS_0001.003",
 			"primitives":[
 				{
 					"attributes":{
@@ -64,67 +70,67 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":68,
+			"count":149484,
 			"max":[
-				1,
-				0.9928575754165649,
-				1
+				0.19142097234725952,
+				0.8739392161369324,
+				0.1866806000471115
 			],
 			"min":[
-				-1.1361128091812134,
-				-1,
-				-1
+				-0.19142095744609833,
+				0,
+				-0.2422173172235489
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":68,
+			"count":149484,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":68,
+			"count":149484,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
-			"componentType":5123,
-			"count":108,
+			"componentType":5125,
+			"count":775008,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":816,
+			"byteLength":1793808,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":816,
-			"byteOffset":816,
+			"byteLength":1793808,
+			"byteOffset":1793808,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":544,
-			"byteOffset":1632,
+			"byteLength":1195872,
+			"byteOffset":3587616,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":216,
-			"byteOffset":2176,
+			"byteLength":3100032,
+			"byteOffset":4783488,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":2392,
+			"byteLength":7883520,
 			"uri":"stool1.bin"
 		}
 	]

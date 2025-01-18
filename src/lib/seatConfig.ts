@@ -7,14 +7,12 @@ export interface Seat {
   }
   
   export const SEATS: Record<string, Seat> = {
-    stool: { id: 'stool', capacity: 2, type: 'drinks-only' },
-    stool1: { id: 'stool1', capacity: 2, type: 'drinks-only' },
-    stool2: { id: 'stool2', capacity: 2, type: 'drinks-only' },
-    stool3: { id: 'stool3', capacity: 2, type: 'drinks-only' },
+    stool: { id: 'stool', capacity: 1, type: 'drinks-only' },
+    stool1: { id: 'stool1', capacity: 1, type: 'drinks-only' },
+    stool2: { id: 'stool2', capacity: 1, type: 'drinks-only' },
+    stool3: { id: 'stool3', capacity: 1, type: 'drinks-only' },
     '2table': { id: '2table', capacity: 2, type: 'both' },
     '2table1': { id: '2table1', capacity: 2, type: 'both' },
-    '2table2': { id: '2table2', capacity: 2, type: 'both' },
-    '2table3': { id: '2table3', capacity: 2, type: 'both' },
     '4table': { id: '4table', capacity: 4, type: 'both' },
     '4table1': { id: '4table1', capacity: 4, type: 'both' },
     couch: { id: 'couch', capacity: 8, type: 'both' },
