@@ -13,7 +13,7 @@ const Navbar = () => {
               <Link href="/" className="text-black font-bold hover:text-red-700 px-3 py-2 rounded-md text-sm">
                 Home
               </Link>
-              <Link href="/menu" className="text-black font-bold hover:text-red-700 px-3 py-2 rounded-md text-sm">
+              <Link href="/inspect-menu" className="text-black font-bold hover:text-red-700 px-3 py-2 rounded-md text-sm">
                 Menu
               </Link>
             </div>

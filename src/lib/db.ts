@@ -74,9 +74,13 @@ export async function checkSeatAvailability(
       AND (
         (start_time, end_time) OVERLAPS ($2::time, $3::time)
       )
+      AND (
+        reservation_type = 'dine-and-eat' 
+        OR reservation_type = $4
+      )
   `;
 
-  return await query(text, [date, startTime, endTime]);
+  return await query(text, [date, startTime, endTime, reservationType]);
 }
 
 export async function createReservation(

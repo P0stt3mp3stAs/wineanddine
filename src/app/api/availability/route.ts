@@ -24,24 +24,48 @@ const SEATS_CONFIG: Record<string, SeatConfig> = {
 
 export async function POST(request: Request) {
   try {
-    // Skip auth for availability check as it's just checking what's available
-    // if we needed auth we'd do it here
-
-    // Parse request body
     const body = await request.json();
+    console.log('Received request body:', body);
+
     const { 
       date, 
       startTime, 
       endTime, 
       guestCount, 
       reservationType,
-      selectedSeats = [] // Previously selected seats to exclude
+      selectedSeats = []
     } = body;
 
-    // Validate required fields
+    // Validate input types and formats
+    // console.log('Inputs:', {
+    //   date: typeof date, 
+    //   startTime: typeof startTime, 
+    //   endTime: typeof endTime, 
+    //   guestCount: typeof guestCount, 
+    //   reservationType: typeof reservationType
+    // });
+
+    // Validate input types and formats
     if (!date || !startTime || !endTime || !guestCount || !reservationType) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { success: false, error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // Parse guestCount to ensure it's a number
+    const parsedGuestCount = parseInt(guestCount, 10);
+    if (isNaN(parsedGuestCount)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid guest count' },
+        { status: 400 }
+      );
+    }
+
+    // Validate reservationType
+    if (reservationType !== 'drink-only' && reservationType !== 'dine-and-eat') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid reservation type' },
         { status: 400 }
       );
     }
@@ -84,9 +108,13 @@ export async function POST(request: Request) {
     });
 
   } catch (error) {
-    console.error('Availability check error:', error);
+    console.error('Full Availability Check Error:', error);
     return NextResponse.json(
-      { error: 'Failed to check availability' },
+      { 
+        success: false,
+        error: 'Failed to check availability', 
+        details: error instanceof Error ? error.message : String(error) 
+      },
       { status: 500 }
     );
   }
