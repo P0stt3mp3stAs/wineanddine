@@ -24,7 +24,7 @@
 // };
 
 import { NextResponse } from 'next/server';
-import { configureAmplify } from '@/lib/auth-config';
+// import { configureAmplify } from '@/lib/auth-config';
 
 export async function middleware(request) {
   const path = request.nextUrl.pathname;

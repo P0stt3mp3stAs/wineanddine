@@ -27,12 +27,38 @@ export function configureAmplify() {
             email: true,
             username: false,
             phone: false
-          }
+          },
         }
       }
     }, {
       ssr: true
     });
+
+    // Configure token storage to use cookies instead of localStorage in production
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      cognitoUserPoolsTokenProvider.setKeyValueStorage({
+        getItem: (key: string) => {
+          const value = document.cookie.match('(^|;)\\s*' + key + '\\s*=\\s*([^;]+)')?.pop() || '';
+          return Promise.resolve(value);
+        },
+        setItem: (key: string, value: string) => {
+          document.cookie = `${key}=${value}; path=/; secure; max-age=86400`;
+          return Promise.resolve();
+        },
+        removeItem: (key: string) => {
+          document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+          return Promise.resolve();
+        },
+        clear: () => {
+          document.cookie.split(";").forEach((c) => {
+            document.cookie = c
+              .replace(/^ +/, "")
+              .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+          });
+          return Promise.resolve();
+        }
+      });
+    }
 
     // Add debug logging
     console.log('Amplify configured with:', {
