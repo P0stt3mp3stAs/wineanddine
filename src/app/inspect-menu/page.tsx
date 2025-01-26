@@ -1,48 +1,45 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import MenuSection from '@/components/menu/MenuSection';
-import CartSummary from '@/components/menu/CartSummary';
-import { CartProvider } from '@/components/menu/CartContext';
+import Image from 'next/image';
 
 interface MenuItem {
-  id: number;  // Changed to string to support prefixed IDs
+  id: string;
   name: string;
   description: string;
-  price: number;
+  price: number | string;
   image?: string;
-  unit?: string;
-  category?: string;
 }
 
 interface MenuData {
-  champagnes: MenuItem[];
-  desserts: MenuItem[];
-  gin_and_tonics: MenuItem[];
-  mains: MenuItem[];
+  specialties: MenuItem[];
   salads: MenuItem[];
+  mains: MenuItem[];
+  steaks: MenuItem[];
+  desserts: MenuItem[];
+  spritzes: MenuItem[];
   sides: MenuItem[];
   snacks_and_starters: MenuItem[];
-  specialties: MenuItem[];
-  spritzes: MenuItem[];
-  steaks: MenuItem[];
+  champagnes: MenuItem[];
+  gin_and_tonics: MenuItem[];
 }
 
-export default function Menu() {
+export default function InspectMenu() {
   const [menuData, setMenuData] = useState<MenuData>({
-    champagnes: [],
-    desserts: [],
-    gin_and_tonics: [],
-    mains: [],
+    specialties: [],
     salads: [],
+    mains: [],
+    steaks: [],
+    desserts: [],
+    spritzes: [],
     sides: [],
     snacks_and_starters: [],
-    specialties: [],
-    spritzes: [],
-    steaks: []
+    champagnes: [],
+    gin_and_tonics: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSection, setSelectedSection] = useState<keyof MenuData>('specialties');
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -51,50 +48,7 @@ export default function Menu() {
         const data = await response.json();
         
         if (data.success) {
-          // Add category prefixes to each item's ID
-          const processedData = {
-            specialties: data.data.specialties.map((item: MenuItem) => ({
-              ...item,
-              id: `spec_${item.id}`
-            })),
-            salads: data.data.salads.map((item: MenuItem) => ({
-              ...item,
-              id: `salad_${item.id}`
-            })),
-            mains: data.data.mains.map((item: MenuItem) => ({
-              ...item,
-              id: `main_${item.id}`
-            })),
-            steaks: data.data.steaks.map((item: MenuItem) => ({
-              ...item,
-              id: `steak_${item.id}`
-            })),
-            desserts: data.data.desserts.map((item: MenuItem) => ({
-              ...item,
-              id: `dess_${item.id}`
-            })),
-            spritzes: data.data.spritzes.map((item: MenuItem) => ({
-              ...item,
-              id: `spritz_${item.id}`
-            })),
-            sides: data.data.sides.map((item: MenuItem) => ({
-              ...item,
-              id: `side_${item.id}`
-            })),
-            snacks_and_starters: data.data.snacks_and_starters.map((item: MenuItem) => ({
-              ...item,
-              id: `start_${item.id}`
-            })),
-            champagnes: data.data.champagnes.map((item: MenuItem) => ({
-              ...item,
-              id: `champ_${item.id}`
-            })),
-            gin_and_tonics: data.data.gin_and_tonics.map((item: MenuItem) => ({
-              ...item,
-              id: `gin_${item.id}`
-            }))
-          };
-          setMenuData(processedData);
+          setMenuData(data.data);
         } else {
           setError('Failed to load menu items');
         }
@@ -110,130 +64,279 @@ export default function Menu() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600 text-xl">{error}</div>
-      </div>
-    );
+    return <div>{error}</div>;
   }
 
+  const formatPrice = (price: number | string) => {
+    if (typeof price === 'number') {
+      return `$${price.toFixed(2)}`;
+    }
+    return price;
+  };
+
+  const renderSpecialties = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+          {item.image ? (
+            <div className="relative h-1/2">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover rounded-t-lg"
+              />
+            </div>
+          ) : (
+            <div className="h-1/2 bg-amber-100 rounded-t-lg flex items-center justify-center">
+              <span className="text-4xl">🍽️</span>
+            </div>
+          )}
+          <div className="p-4 flex flex-col justify-between h-1/2">
+            <div>
+              <h3 className="text-xl font-bold mb-2 truncate">{item.name}</h3>
+              <p className="text-sm mb-2 line-clamp-3">{item.description}</p>
+            </div>
+            <p className="text-lg font-semibold">{formatPrice(item.price)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderSalads = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+          {item.image ? (
+            <div className="relative h-1/2">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover rounded-t-lg"
+              />
+            </div>
+          ) : (
+            <div className="h-1/2 bg-green-100 rounded-t-lg flex items-center justify-center">
+              <span className="text-4xl">🥗</span>
+            </div>
+          )}
+          <div className="p-4 flex flex-col justify-between h-1/2">
+            <div>
+              <h3 className="text-lg font-semibold mb-2 truncate">{item.name}</h3>
+              <p className="text-sm mb-2 line-clamp-3">{item.description}</p>
+            </div>
+            <p className="font-bold">{formatPrice(item.price)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderMains = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+          {item.image ? (
+            <div className="relative h-1/2">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover rounded-t-lg"
+              />
+            </div>
+          ) : (
+            <div className="h-1/2 bg-blue-100 rounded-t-lg flex items-center justify-center">
+              <span className="text-4xl">🍖</span>
+            </div>
+          )}
+          <div className="p-4 flex flex-col justify-between h-1/2">
+            <div>
+              <h3 className="text-xl font-bold mb-2 truncate">{item.name}</h3>
+              <p className="text-sm mb-2 line-clamp-3">{item.description}</p>
+            </div>
+            <p className="text-lg font-semibold">{formatPrice(item.price)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderSteaks = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+          {item.image ? (
+            <div className="relative h-1/2">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover rounded-t-lg"
+              />
+            </div>
+          ) : (
+            <div className="h-1/2 bg-red-100 rounded-t-lg flex items-center justify-center">
+              <span className="text-4xl">🥩</span>
+            </div>
+          )}
+          <div className="p-4 flex flex-col justify-between h-1/2">
+            <div>
+              <h3 className="text-lg font-bold mb-2 truncate">{item.name}</h3>
+              <p className="text-xs mb-2 line-clamp-3">{item.description}</p>
+            </div>
+            <p className="text-base font-semibold">{formatPrice(item.price)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderDesserts = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+          {item.image ? (
+            <div className="relative h-1/2">
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                className="object-cover rounded-t-lg"
+              />
+            </div>
+          ) : (
+            <div className="h-1/2 bg-pink-100 rounded-t-lg flex items-center justify-center">
+              <span className="text-4xl">🍰</span>
+            </div>
+          )}
+          <div className="p-4 flex flex-col justify-between h-1/2">
+            <div>
+              <h3 className="text-base font-semibold mb-2 truncate">{item.name}</h3>
+              <p className="text-xs mb-2 line-clamp-3">{item.description}</p>
+            </div>
+            <p className="text-sm font-bold">{formatPrice(item.price)}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderDrinks = (items: MenuItem[], bgColor: string, textColor: string, emoji: string) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-sm p-4 flex flex-col justify-between hover:shadow-md transition-shadow duration-200">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold truncate flex-grow">{item.name}</h3>
+              <span className="text-2xl">{emoji}</span>
+            </div>
+            <p className="text-sm mb-4 line-clamp-2">{item.description}</p>
+          </div>
+          <p className="text-base font-bold self-end">{formatPrice(item.price)}</p>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderSides = (items: MenuItem[]) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {items.map((item) => (
+        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-sm p-4 flex flex-col justify-between hover:shadow-md transition-shadow duration-200">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-lg font-semibold truncate flex-grow">{item.name}</h3>
+              <span className="text-2xl">🍟</span>
+            </div>
+            <p className="text-sm mb-4 line-clamp-2">{item.description}</p>
+          </div>
+          <p className="text-base font-bold self-end">{formatPrice(item.price)}</p>
+        </div>
+      ))}
+    </div>
+  );
+  
+  const renderSelectedSection = () => {
+    switch (selectedSection) {
+      case 'specialties':
+        return renderSpecialties(menuData.specialties);
+      case 'salads':
+        return renderSalads(menuData.salads);
+      case 'mains':
+        return renderMains(menuData.mains);
+      case 'steaks':
+        return renderSteaks(menuData.steaks);
+      case 'desserts':
+        return renderDesserts(menuData.desserts);
+      case 'sides':
+        return renderSides(menuData.sides);
+      case 'snacks_and_starters':
+        return renderDrinks(menuData.snacks_and_starters, 'bg-purple-50', 'text-purple-800', '🍤');
+      case 'champagnes':
+        return renderDrinks(menuData.champagnes, 'bg-indigo-50', 'text-indigo-800', '🍾');
+        case 'spritzes':
+          return renderDrinks(menuData.spritzes, 'bg-yellow-50', 'text-yellow-800', '🍹');
+      case 'gin_and_tonics':
+        return renderDrinks(menuData.gin_and_tonics, 'bg-cyan-50', 'text-cyan-800', '🍸');
+      default:
+        return <div>Section not found</div>;
+    }
+  };
+
+  const menuSections: { [key in keyof MenuData]: string } = {
+    specialties: "Our Specialties",
+    salads: "Salads",
+    mains: "Main Courses",
+    steaks: "Steaks",
+    desserts: "Desserts",
+    sides: "Sides",
+    snacks_and_starters: "Snacks & Starters",
+    champagnes: "Champagnes",
+    spritzes: "Spritzes",
+    gin_and_tonics: "Gin & Tonics"
+  };
+
   return (
-    <CartProvider>
+    <div className="min-h-screen bg-c7 text-c9">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">Our Menu</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-c8">Our Menu</h1>
         
-        <MenuSection
-          title="Our Specialties"
-          items={menuData.specialties}
-          theme={{ 
-            backgroundColor: 'bg-amber-50', 
-            titleColor: 'text-amber-800', 
-            textColor: 'text-amber-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Fresh Salads"
-          items={menuData.salads}
-          theme={{ 
-            backgroundColor: 'bg-green-50', 
-            titleColor: 'text-green-800', 
-            textColor: 'text-green-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Premium Steaks"
-          items={menuData.steaks}
-          theme={{ 
-            backgroundColor: 'bg-red-50', 
-            titleColor: 'text-red-800', 
-            textColor: 'text-red-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Main Courses"
-          items={menuData.mains}
-          theme={{ 
-            backgroundColor: 'bg-blue-50', 
-            titleColor: 'text-blue-800', 
-            textColor: 'text-blue-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Desserts"
-          items={menuData.desserts}
-          theme={{ 
-            backgroundColor: 'bg-pink-50', 
-            titleColor: 'text-pink-800', 
-            textColor: 'text-pink-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Snacks & Starters"
-          items={menuData.snacks_and_starters}
-          theme={{ 
-            backgroundColor: 'bg-purple-50', 
-            titleColor: 'text-purple-800', 
-            textColor: 'text-purple-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Side Dishes"
-          items={menuData.sides}
-          theme={{ 
-            backgroundColor: 'bg-orange-50', 
-            titleColor: 'text-orange-800', 
-            textColor: 'text-orange-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Champagnes"
-          items={menuData.champagnes}
-          theme={{ 
-            backgroundColor: 'bg-yellow-50', 
-            titleColor: 'text-yellow-800', 
-            textColor: 'text-yellow-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Spritzes"
-          items={menuData.spritzes}
-          theme={{ 
-            backgroundColor: 'bg-indigo-50', 
-            titleColor: 'text-indigo-800', 
-            textColor: 'text-indigo-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Gin & Tonics"
-          items={menuData.gin_and_tonics}
-          theme={{ 
-            backgroundColor: 'bg-cyan-50', 
-            titleColor: 'text-cyan-800', 
-            textColor: 'text-cyan-700' 
-          }}
-        />
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+  {Object.keys(menuSections).map((section) => (
+    <button
+      key={section}
+      onClick={() => setSelectedSection(section as keyof MenuData)}
+      className={`
+        px-4 py-2 rounded-full relative font-bold text-sm
+        overflow-hidden transition-all duration-700
+        ${selectedSection === section
+          ? 'bg-c8 text-c6 '
+          : 'bg-c6 text-c9 hover:text-c6 [text-shadow:0px_0px_0px_#643B2B] hover:[text-shadow:2px_2px_2px_#B47659]'
+        }
+        after:absolute after:h-1 after:w-1 after:bg-c9 after:left-5 after:bottom-0
+        after:translate-y-full after:rounded-md after:transition-all after:duration-700
+        hover:after:scale-[300] hover:after:duration-700
+        after:-z-20 z-30
+      `}
+    >
+      {menuSections[section as keyof MenuData]}
+    </button>
+  ))}
+</div>
+
+        <div className="bg-c6 rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-semibold mb-6 text-c8">
+            {menuSections[selectedSection]}
+          </h2>
+          {renderSelectedSection()}
+        </div>
       </div>
-      
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
-        <CartSummary />
-      </div>
-    </CartProvider>
+    </div>
   );
 }

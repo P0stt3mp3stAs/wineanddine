@@ -8,9 +8,10 @@ import { getCurrentUser, fetchAuthSession, fetchUserAttributes } from 'aws-ampli
 function ReservationContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [username, setUsername] = useState<string>('');
   const [userId, setUserId] = useState<string>('');
+  const [shortUserId, setShortUserId] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [preferredUsername, setPreferredUsername] = useState<string>('');
 
   // Get all params from URL
   const selectedSeat = searchParams.get('selectedSeat') || '1';
@@ -19,24 +20,25 @@ function ReservationContent() {
   const endTime = searchParams.get('endTime');
   const guestCount = searchParams.get('guestCount');
   const reservationType = searchParams.get('reservationType');
-  const [preferredUsername, setPreferredUsername] = useState<string>('');
 
   useEffect(() => {
     const getUserData = async () => {
       try {
         const currentUser = await getCurrentUser();
         if (currentUser) {
-          setUserId(currentUser.userId || '');
+          const fullUserId = currentUser.userId || '';
+          setUserId(fullUserId);
           
+          // Extract the last 6 characters of the Cognito user ID
+          const shortId = fullUserId.slice(-6);
+          setShortUserId(shortId);
+
           // Fetch user attributes to get the preferred_username
           const attributes = await fetchUserAttributes();
           setPreferredUsername(attributes.preferred_username || '');
         }
 
-        // If you still need more details, you can use fetchAuthSession
-        const session = await fetchAuthSession();
-        console.log('Auth session:', session);
-
+        // ... rest of the function
       } catch (error) {
         console.error('Error getting user data:', error);
       }
@@ -93,7 +95,7 @@ function ReservationContent() {
           <span>{preferredUsername || 'Loading...'}</span>
 
           <span className="font-semibold">User ID:</span>
-          <span>{userId || 'Loading...'}</span>
+          <span>{shortUserId || 'Loading...'}</span>
 
           <span className="font-semibold">Seat ID:</span>
           <span>{selectedSeat || 'Not selected'}</span>
