@@ -5,8 +5,8 @@ export default async function Home() {
 
   return (
     <main>
-      <div className="bg-c8 text-white p-4 text-center mt-24">
-        <h1 className="text-3xl font-black">Wine and Dine</h1>
+      <div className="bg-green-500 text-white p-4 text-center mt-24">
+        <h1 className="text-3xl text-red-500 font-black">you mama so old she farted and cause the big bang</h1>
       </div>
       <div className="max-w-4xl mx-auto p-8 rounded-3xl text-white text-xl bg-c7 font-black mt-7">
         <p className="mb-4">
