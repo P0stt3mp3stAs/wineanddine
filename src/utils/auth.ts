@@ -16,6 +16,7 @@ import {
 } from 'aws-amplify/auth';
 import { configureAmplify } from '@/lib/auth-config';
 
+
 // Configure Amplify
 const amplifyConfig = {
   Auth: {
@@ -325,3 +326,7 @@ export async function handleSignUp(
 
 // Export getCurrentUser from Amplify for server-side use
 export { getCurrentUser as getServerUser } from 'aws-amplify/auth';
+function fetchUserAttributes() {
+  throw new Error('Function not implemented.');
+}
+

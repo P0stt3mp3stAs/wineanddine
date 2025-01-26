@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
-import { getCurrentUser } from '@/utils/auth';
+import { getCurrentUser, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
 
 // Separate the main content into a client component
 function ReservationContent() {
@@ -19,15 +19,24 @@ function ReservationContent() {
   const endTime = searchParams.get('endTime');
   const guestCount = searchParams.get('guestCount');
   const reservationType = searchParams.get('reservationType');
+  const [preferredUsername, setPreferredUsername] = useState<string>('');
 
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const user = await getCurrentUser();
-        if (user) {
-          setUsername(user.username || '');
-          setUserId(user.id || '1');
+        const currentUser = await getCurrentUser();
+        if (currentUser) {
+          setUserId(currentUser.userId || '');
+          
+          // Fetch user attributes to get the preferred_username
+          const attributes = await fetchUserAttributes();
+          setPreferredUsername(attributes.preferred_username || '');
         }
+
+        // If you still need more details, you can use fetchAuthSession
+        const session = await fetchAuthSession();
+        console.log('Auth session:', session);
+
       } catch (error) {
         console.error('Error getting user data:', error);
       }
@@ -81,7 +90,7 @@ function ReservationContent() {
       <div className="space-y-4 bg-gray-50 p-6 rounded-lg shadow">
         <div className="grid grid-cols-2 gap-2">
           <span className="font-semibold">Username:</span>
-          <span>{username || 'Loading...'}</span>
+          <span>{preferredUsername || 'Loading...'}</span>
 
           <span className="font-semibold">User ID:</span>
           <span>{userId || 'Loading...'}</span>

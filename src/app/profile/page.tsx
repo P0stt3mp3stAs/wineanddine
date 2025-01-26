@@ -19,11 +19,9 @@ interface Reservation {
 
 export default function Profile() {
   const { 
-    userInfo, 
-    setUserInfo, 
+    userInfo,
     isLoading, 
-    error, 
-    setError, 
+    error,
     handleSignOut, 
     handleDeleteAccount 
   } = useProfile();
