@@ -5,7 +5,7 @@ import { useCart } from '@/components/menu/CartContext';
 import Image from 'next/image';
 
 type MenuItemProps = {
-  id: number;
+  id: number | string;
   name: string;
   description: string;
   price: number | string;

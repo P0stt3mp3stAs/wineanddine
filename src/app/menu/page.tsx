@@ -6,7 +6,7 @@ import CartSummary from '@/components/menu/CartSummary';
 import { CartProvider } from '@/components/menu/CartContext';
 
 interface MenuItem {
-  id: number;  // Changed to string to support prefixed IDs
+  id: number;  // Keep the original ID as a number
   name: string;
   description: string;
   price: number;
@@ -43,6 +43,7 @@ export default function Menu() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedSection, setSelectedSection] = useState<keyof MenuData>('specialties');
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -51,50 +52,7 @@ export default function Menu() {
         const data = await response.json();
         
         if (data.success) {
-          // Add category prefixes to each item's ID
-          const processedData = {
-            specialties: data.data.specialties.map((item: MenuItem) => ({
-              ...item,
-              id: `spec_${item.id}`
-            })),
-            salads: data.data.salads.map((item: MenuItem) => ({
-              ...item,
-              id: `salad_${item.id}`
-            })),
-            mains: data.data.mains.map((item: MenuItem) => ({
-              ...item,
-              id: `main_${item.id}`
-            })),
-            steaks: data.data.steaks.map((item: MenuItem) => ({
-              ...item,
-              id: `steak_${item.id}`
-            })),
-            desserts: data.data.desserts.map((item: MenuItem) => ({
-              ...item,
-              id: `dess_${item.id}`
-            })),
-            spritzes: data.data.spritzes.map((item: MenuItem) => ({
-              ...item,
-              id: `spritz_${item.id}`
-            })),
-            sides: data.data.sides.map((item: MenuItem) => ({
-              ...item,
-              id: `side_${item.id}`
-            })),
-            snacks_and_starters: data.data.snacks_and_starters.map((item: MenuItem) => ({
-              ...item,
-              id: `start_${item.id}`
-            })),
-            champagnes: data.data.champagnes.map((item: MenuItem) => ({
-              ...item,
-              id: `champ_${item.id}`
-            })),
-            gin_and_tonics: data.data.gin_and_tonics.map((item: MenuItem) => ({
-              ...item,
-              id: `gin_${item.id}`
-            }))
-          };
-          setMenuData(processedData);
+          setMenuData(data.data);
         } else {
           setError('Failed to load menu items');
         }
@@ -108,6 +66,48 @@ export default function Menu() {
 
     fetchMenuItems();
   }, []);
+
+  const menuSections: { [key in keyof MenuData]: string } = {
+    specialties: "Specialties",
+    salads: "Salads",
+    mains: "Main Courses",
+    steaks: "Steaks",
+    desserts: "Desserts",
+    sides: "Sides",
+    snacks_and_starters: "Snacks & Starters",
+    champagnes: "Champagnes",
+    spritzes: "Spritzes",
+    gin_and_tonics: "Gin & Tonics"
+  };
+
+  const sectionLayouts: { [key in keyof MenuData]: { columns: { sm: number; md: number; lg: number } } } = {
+    specialties: { columns: { sm: 1, md: 2, lg: 3 } },
+    salads: { columns: { sm: 1, md: 2, lg: 2 } },
+    mains: { columns: { sm: 1, md: 2, lg: 3 } },
+    steaks: { columns: { sm: 1, md: 2, lg: 2 } },
+    desserts: { columns: { sm: 1, md: 2, lg: 3 } },
+    sides: { columns: { sm: 1, md: 2, lg: 4 } },
+    snacks_and_starters: { columns: { sm: 1, md: 2, lg: 3 } },
+    champagnes: { columns: { sm: 1, md: 2, lg: 4 } },
+    spritzes: { columns: { sm: 1, md: 2, lg: 3 } },
+    gin_and_tonics: { columns: { sm: 1, md: 2, lg: 3 } }
+  };
+
+  const renderSelectedSection = () => {
+    const items = menuData[selectedSection];
+    return (
+      <MenuSection
+        title={menuSections[selectedSection]}
+        items={items}
+        sectionKey={selectedSection}  // Pass the section key to MenuSection
+        theme={{
+          backgroundColor: 'bg-c6',
+          titleColor: 'text-c8',
+          textColor: 'text-c9'
+        }}
+      />
+    );
+  };
 
   if (loading) {
     return (
@@ -127,113 +127,33 @@ export default function Menu() {
 
   return (
     <CartProvider>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-center mb-8">Our Menu</h1>
-        
-        <MenuSection
-          title="Our Specialties"
-          items={menuData.specialties}
-          theme={{ 
-            backgroundColor: 'bg-amber-50', 
-            titleColor: 'text-amber-800', 
-            textColor: 'text-amber-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Fresh Salads"
-          items={menuData.salads}
-          theme={{ 
-            backgroundColor: 'bg-green-50', 
-            titleColor: 'text-green-800', 
-            textColor: 'text-green-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Premium Steaks"
-          items={menuData.steaks}
-          theme={{ 
-            backgroundColor: 'bg-red-50', 
-            titleColor: 'text-red-800', 
-            textColor: 'text-red-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Main Courses"
-          items={menuData.mains}
-          theme={{ 
-            backgroundColor: 'bg-blue-50', 
-            titleColor: 'text-blue-800', 
-            textColor: 'text-blue-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Desserts"
-          items={menuData.desserts}
-          theme={{ 
-            backgroundColor: 'bg-pink-50', 
-            titleColor: 'text-pink-800', 
-            textColor: 'text-pink-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Snacks & Starters"
-          items={menuData.snacks_and_starters}
-          theme={{ 
-            backgroundColor: 'bg-purple-50', 
-            titleColor: 'text-purple-800', 
-            textColor: 'text-purple-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Side Dishes"
-          items={menuData.sides}
-          theme={{ 
-            backgroundColor: 'bg-orange-50', 
-            titleColor: 'text-orange-800', 
-            textColor: 'text-orange-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Champagnes"
-          items={menuData.champagnes}
-          theme={{ 
-            backgroundColor: 'bg-yellow-50', 
-            titleColor: 'text-yellow-800', 
-            textColor: 'text-yellow-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Spritzes"
-          items={menuData.spritzes}
-          theme={{ 
-            backgroundColor: 'bg-indigo-50', 
-            titleColor: 'text-indigo-800', 
-            textColor: 'text-indigo-700' 
-          }}
-        />
-        
-        <MenuSection
-          title="Gin & Tonics"
-          items={menuData.gin_and_tonics}
-          theme={{ 
-            backgroundColor: 'bg-cyan-50', 
-            titleColor: 'text-cyan-800', 
-            textColor: 'text-cyan-700' 
-          }}
-        />
+      <div className="min-h-screen bg-c7 text-c9">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold text-center mb-8 text-c8">Our Menu</h1>
+          
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {Object.keys(menuSections).map((section) => (
+              <button
+                key={section}
+                onClick={() => setSelectedSection(section as keyof MenuData)}
+                className={`
+                  px-4 py-2 rounded-full relative font-bold text-sm
+                  overflow-hidden transition-all duration-700
+                  ${selectedSection === section
+                    ? 'bg-c8 text-c7'
+                    : 'bg-c6 text-c8 hover:bg-c8 hover:text-c7'}
+                `}
+              >
+                {menuSections[section as keyof MenuData]}
+              </button>
+            ))}
+          </div>
+
+          {renderSelectedSection()}
+        </div>
       </div>
       
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
-        <CartSummary />
-      </div>
+      <CartSummary />
     </CartProvider>
   );
 }
