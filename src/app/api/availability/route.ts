@@ -1,9 +1,7 @@
 // app/api/availability/route.ts
 
 import { NextResponse } from 'next/server';
-import { getCurrentUser } from 'aws-amplify/auth';
 import { checkSeatAvailability } from '@/lib/db';
-import { headers } from 'next/headers';
 
 interface SeatConfig {
   capacity: number;

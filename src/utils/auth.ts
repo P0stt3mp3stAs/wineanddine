@@ -157,10 +157,12 @@ interface UserAttributes {
 }
 
 export const getCurrentUser = async (): Promise<UserAttributes | null> => {
+
   return new Promise((resolve) => {
     const cognitoUser = userPool.getCurrentUser();
     
     console.log('Current Cognito user:', cognitoUser);
+    console.log('UserPool config:', userPool.getUserPoolId(), userPool.getClientId());
 
     if (!cognitoUser) {
       console.log('No current user found');
@@ -181,6 +183,8 @@ export const getCurrentUser = async (): Promise<UserAttributes | null> => {
         return;
       }
 
+      console.log('Valid session found');
+
       cognitoUser.getUserAttributes((err, attributes) => {
         if (err) {
           console.log('Get attributes error:', err);
@@ -188,17 +192,6 @@ export const getCurrentUser = async (): Promise<UserAttributes | null> => {
           return;
         }
         
-        // if (!attributes) {
-        //   resolve(null);
-        //   return;
-        // }
-
-        // resolve({
-        //   id: attributes.find(attr => attr.Name === 'sub')?.Value,
-        //   email: attributes.find(attr => attr.Name === 'email')?.Value,
-        //   username: attributes.find(attr => attr.Name === 'preferred_username')?.Value,
-        //   isVerified: session.isValid()
-        // });
         const userData = {
           id: attributes?.find(attr => attr.Name === 'sub')?.Value,
           email: attributes?.find(attr => attr.Name === 'email')?.Value,

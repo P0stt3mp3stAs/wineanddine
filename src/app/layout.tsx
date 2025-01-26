@@ -6,7 +6,7 @@ import { Inter } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import AmplifyProvider from '@/components/AmplifyProvider';
 import { Toaster } from 'react-hot-toast';
-
+import { configureAmplify } from '@/lib/amplify-config';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +20,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  configureAmplify();
   return (
     <html lang="en">
       <body suppressHydrationWarning={true} className={inter.className}>
