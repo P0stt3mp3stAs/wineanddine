@@ -140,8 +140,13 @@ export default function Menu() {
                   px-4 py-2 rounded-full relative font-bold text-sm
                   overflow-hidden transition-all duration-700
                   ${selectedSection === section
-                    ? 'bg-c8 text-c7'
-                    : 'bg-c6 text-c8 hover:bg-c8 hover:text-c7'}
+                    ? 'bg-c8 text-c6 [text-shadow:3px_3px_3px_#B47659]'
+                    : 'bg-c6 text-c9 hover:text-c6 [text-shadow:0px_0px_0px_#643B2B] hover:[text-shadow:2px_2px_2px_#B47659]'
+                  }
+                  after:absolute after:h-1 after:w-1 after:bg-c9 after:left-5 after:bottom-0
+                  after:translate-y-full after:rounded-md after:transition-all after:duration-700
+                  hover:after:scale-[300] hover:after:duration-700
+                  after:-z-20 z-30
                 `}
               >
                 {menuSections[section as keyof MenuData]}

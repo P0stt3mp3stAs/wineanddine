@@ -308,27 +308,27 @@ export default function InspectMenu() {
         <h1 className="text-4xl font-bold text-center mb-8 text-c8">Our Menu</h1>
         
         <div className="flex flex-wrap justify-center gap-4 mb-8">
-  {Object.keys(menuSections).map((section) => (
-    <button
-      key={section}
-      onClick={() => setSelectedSection(section as keyof MenuData)}
-      className={`
-        px-4 py-2 rounded-full relative font-bold text-sm
-        overflow-hidden transition-all duration-700
-        ${selectedSection === section
-          ? 'bg-c8 text-c6 '
-          : 'bg-c6 text-c9 hover:text-c6 [text-shadow:0px_0px_0px_#643B2B] hover:[text-shadow:2px_2px_2px_#B47659]'
-        }
-        after:absolute after:h-1 after:w-1 after:bg-c9 after:left-5 after:bottom-0
-        after:translate-y-full after:rounded-md after:transition-all after:duration-700
-        hover:after:scale-[300] hover:after:duration-700
-        after:-z-20 z-30
-      `}
-    >
-      {menuSections[section as keyof MenuData]}
-    </button>
-  ))}
-</div>
+          {Object.keys(menuSections).map((section) => (
+            <button
+              key={section}
+              onClick={() => setSelectedSection(section as keyof MenuData)}
+              className={`
+                px-4 py-2 rounded-full relative font-bold text-sm
+                overflow-hidden transition-all duration-700
+                ${selectedSection === section
+                  ? 'bg-c8 text-c6 [text-shadow:3px_3px_3px_#B47659]'
+                  : 'bg-c6 text-c9 hover:text-c6 [text-shadow:0px_0px_0px_#643B2B] hover:[text-shadow:2px_2px_2px_#B47659]'
+                }
+                after:absolute after:h-1 after:w-1 after:bg-c9 after:left-5 after:bottom-0
+                after:translate-y-full after:rounded-md after:transition-all after:duration-700
+                hover:after:scale-[300] hover:after:duration-700
+                after:-z-20 z-30
+              `}
+            >
+              {menuSections[section as keyof MenuData]}
+            </button>
+          ))}
+        </div>
 
         <div className="bg-c6 rounded-lg shadow-lg p-6">
           <h2 className="text-2xl font-semibold mb-6 text-c8">

@@ -24,73 +24,83 @@ const MenuItem = ({ id, name, description, price, unit, image, theme }: MenuItem
   
   const [, setIsAnimating] = useState(false);
   const { items, addItem, removeItem } = useCart();
+  const [isClicked, setIsClicked] = useState(false);
   
   const quantity = items.find(item => item.id === id)?.quantity || 0;
 
   const handleAdd = () => {
     addItem({ id, name, price: Number(price) });
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 200);
+    setIsClicked(true);
+    setTimeout(() => {
+      setIsAnimating(false);
+      setIsClicked(false);
+    }, 200);
   };
-
+  
   const handleRemove = () => {
     removeItem(id);
     setIsAnimating(true);
-    setTimeout(() => setIsAnimating(false), 200);
+    setIsClicked(true);
+    setTimeout(() => {
+      setIsAnimating(false);
+      setIsClicked(false);
+    }, 200);
   };
 
   return (
-    <div className={`${theme?.backgroundColor || 'bg-white'} rounded-lg shadow-md p-4 transition-all duration-200`}>
+    <div className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
       {image && (
-        <div className="relative w-full h-48 mb-4">
+        <div className="relative h-1/2">
           <Image
             src={image}
             alt={name}
             fill
-            className="rounded-lg object-cover"
+            className="object-cover rounded-t-lg"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
       )}
-      <div className="flex justify-between items-start mb-2">
-        <h3 className={`text-xl font-semibold ${theme?.titleColor || 'text-gray-900'}`}>
-          {name}
-        </h3>
-        {quantity === 0 ? (
-          <button
-            onClick={handleAdd}
-            className="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-all duration-300"
-          >
-            <span className="text-2xl">+</span>
-          </button>
-        ) : (
-          <div className="bg-emerald-500 text-white rounded-full px-4 py-1 flex items-center space-x-4 transition-all duration-300">
-            <button
-              onClick={handleRemove}
-              className="text-xl font-medium"
-            >
-              -
-            </button>
-            <span className={`text-lg font-medium min-w-[20px] text-center`}>
-              {quantity}
-            </span>
+      <div className="p-4 flex flex-col justify-between h-1/2">
+        <div>
+          <h3 className="text-xl font-bold mb-2 truncate">{name}</h3>
+          {description && (
+            <p className="text-sm mb-2 line-clamp-3">{description}</p>
+          )}
+        </div>
+        <div className="flex justify-between items-center">
+          <p className="text-lg font-semibold">
+            ${typeof price === 'number' ? price.toFixed(2) : price}
+            {unit ? ` ${unit}` : ''}
+          </p>
+          {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="text-xl font-medium"
+              className="w-10 h-10 rounded-full bg-c8 text-white flex items-center justify-center hover:bg-c9 transition-all duration-300"
             >
-              +
+              <span className="text-2xl">+</span>
             </button>
-          </div>
-        )}
+          ) : (
+            <div className={`${isClicked ? 'bg-c8' : 'bg-c9'} text-white rounded-full px-4 py-1 flex items-center space-x-4 transition-all duration-300`}>
+              <button
+                onClick={handleRemove}
+                className="text-xl font-medium"
+              >
+                -
+              </button>
+              <span className="text-lg font-medium min-w-[20px] text-center">
+                {quantity}
+              </span>
+              <button
+                onClick={handleAdd}
+                className="text-xl font-medium"
+              >
+                +
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-      {description && (
-        <p className={`mb-2 ${theme?.textColor || 'text-gray-600'}`}>
-          {description}
-        </p>
-      )}
-      <p className={`text-lg font-medium ${theme?.priceColor || 'text-gray-800'}`}>
-        ${typeof price === 'number' ? price.toFixed(2) : price}{unit ? ` ${unit}` : ''}
-      </p>
     </div>
   );
 };

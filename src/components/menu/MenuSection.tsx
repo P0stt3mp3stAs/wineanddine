@@ -30,7 +30,7 @@ const MenuSection = ({ title, items = [], sectionKey, theme, layout }: MenuSecti
   if (!items || items.length === 0) {
     return null;
   }
-
+  
   const gridColumns = layout?.columns || { sm: 1, md: 2, lg: 3 };
 
   return (
@@ -41,7 +41,7 @@ const MenuSection = ({ title, items = [], sectionKey, theme, layout }: MenuSecti
       <div className={`grid gap-6
         grid-cols-${gridColumns.sm || 1}
         md:grid-cols-${gridColumns.md || 2}
-        lg:grid-cols-${gridColumns.lg || 3}
+        lg:grid-cols-4
       `}>
         {items.map((item) => (
           <MenuItem

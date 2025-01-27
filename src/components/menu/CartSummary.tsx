@@ -46,7 +46,7 @@ const CartSummary = () => {
           <span>${total.toFixed(2)}</span>
         </div>
         <button
-          className="w-full bg-emerald-500 text-white py-3 rounded-lg font-semibold hover:bg-emerald-600 transition-colors duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full bg-c9 text-white py-3 rounded-lg font-semibold hover:bg-c8 active:bg-c9 transition-colors duration-200 transform hover:scale-[1.05] active:scale-[0.98]"
         >
           Finish Reservation
         </button>
