@@ -29,14 +29,6 @@ export const useProfile = () => {
           username: attributes['preferred_username'] || null,
           user_id: currentUser.userId || attributes.sub,
         });
-        
-        // try {
-        //   const imageKey = `profiles/${attributes['preferred_username']}/profile.jpg`;
-        //   const imageUrl = await getImageUrl(imageKey);
-        //   setUserInfo(prev => ({ ...prev, profilePicture: imageUrl }));
-        // } catch (error) {
-        //   console.log('No existing profile picture');
-        // }
       }
     } catch (error) {
       console.error('Error loading profile:', error);

@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import MenuSection from '@/components/menu/MenuSection';
 import CartSummary from '@/components/menu/CartSummary';
@@ -29,6 +30,8 @@ interface MenuData {
 }
 
 export default function Menu() {
+  const searchParams = useSearchParams();
+  const [reservationId, setReservationId] = useState<string | null>(null);
   const [menuData, setMenuData] = useState<MenuData>({
     champagnes: [],
     desserts: [],
@@ -46,6 +49,30 @@ export default function Menu() {
   const [selectedSection, setSelectedSection] = useState<keyof MenuData>('specialties');
 
   useEffect(() => {
+    console.log('Received query string:', searchParams.toString());
+    
+    const fetchReservationId = async () => {
+      const queryString = searchParams.toString();
+      console.log('Received query string:', queryString);
+    
+      try {
+        const response = await fetch(`/api/reservations/get-id?${queryString}`);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error}`);
+        }
+        const data = await response.json();
+        if (data.success && data.reservationId) {
+          setReservationId(data.reservationId);
+          console.log('Reservation ID:', data.reservationId);
+        } else {
+          console.error('Failed to fetch reservation ID:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching reservation ID:', error);
+      }
+    };
+    
     const fetchMenuItems = async () => {
       try {
         const response = await fetch('/api/menu');
@@ -58,14 +85,15 @@ export default function Menu() {
         }
       } catch (error) {
         setError('Failed to load menu items');
-        console.error('Error fetching menu items:', error);
+        // console.error('Error fetching menu items:', error);
       } finally {
         setLoading(false);
       }
     };
-
+    
+    fetchReservationId();
     fetchMenuItems();
-  }, []);
+  }, [searchParams]);
 
   const menuSections: { [key in keyof MenuData]: string } = {
     specialties: "Specialties",
@@ -158,7 +186,7 @@ export default function Menu() {
         </div>
       </div>
       
-      <CartSummary />
+      <CartSummary reservationId={reservationId} />
     </CartProvider>
   );
 }

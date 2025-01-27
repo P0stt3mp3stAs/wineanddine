@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useProfile } from '@/hooks/useProfile';
 import { getUserReservations, cancelReservation } from '@/actions/reservations';
-// import UserReservations from '@/components/UserReservations';
 
 interface Reservation {
   id: number;
@@ -15,6 +14,7 @@ interface Reservation {
   reservation_type: string;
   is_primary: boolean;
   reservation_group_id: string;
+  menu_items: string; // Added menu_items
 }
 
 export default function Profile() {
@@ -27,7 +27,6 @@ export default function Profile() {
   } = useProfile();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-
 
   useEffect(() => {
     if (userInfo?.user_id) {
@@ -115,50 +114,105 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Reservations Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+       {/* Reservations Section */}
+       <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-2xl font-bold mb-4">Your Reservations</h2>
           <div className="space-y-4">
             {reservations.map((reservation) => (
               <div 
                 key={reservation.id} 
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
-                <div className="flex space-x-8">
-                  <div>
-                    <span className="text-sm text-gray-500">Date</span>
-                    <p className="font-medium">
-                      {new Date(reservation.reservation_date).toLocaleDateString()}
-                    </p>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex space-x-8">
+                    <div>
+                      <span className="text-sm text-gray-500">Date</span>
+                      <p className="font-medium">
+                        {new Date(reservation.reservation_date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500">Time</span>
+                      <p className="font-medium">
+                        {reservation.start_time} - {reservation.end_time}
+                      </p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500">Guests</span>
+                      <p className="font-medium">{reservation.guest_count}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500">Type</span>
+                      <p className="font-medium">{reservation.reservation_type}</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Time</span>
-                    <p className="font-medium">
-                      {reservation.start_time} - {reservation.end_time}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Guests</span>
-                    <p className="font-medium">{reservation.guest_count}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500">Type</span>
-                    <p className="font-medium">{reservation.reservation_type}</p>
+                  <button 
+                    onClick={async () => {
+                      const result = await cancelReservation(reservation.id);
+                      if (result.success) {
+                        setReservations(prevReservations => 
+                          prevReservations.filter(res => res.id !== reservation.id)
+                        );
+                      }
+                    }}
+                    className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                  >
+                    Cancel Reservation
+                  </button>
+                </div>
+
+                {/* Menu Items Section */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">Order Summary</h3>
+                  <div className="bg-white p-4 rounded-md shadow-sm">
+                    {reservation.menu_items ? (
+                      <div>
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="text-left py-2">Item</th>
+                              <th className="text-center py-2">Qty</th>
+                              <th className="text-right py-2">Price</th>
+                              <th className="text-right py-2">Total</th>
+                            </tr>
+                          </thead>   
+                          <tbody>
+                            {Array.isArray(reservation.menu_items) ? (
+                              reservation.menu_items.map((item: any, index: number) => (
+                                <tr key={index} className="border-b last:border-b-0">
+                                  <td className="py-2">{item.name || 'Unknown Item'}</td>
+                                  <td className="text-center py-2">{item.quantity || 1}</td>
+                                  <td className="text-right py-2">${item.price?.toFixed(2) || 'N/A'}</td>
+                                  <td className="text-right py-2">
+                                    ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                                  </td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr className="border-b">
+                                <td colSpan={4} className="py-2 text-center text-gray-500 italic">
+                                  Unable to display order details
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                          <tfoot>
+                            <tr className="font-semibold">
+                              <td colSpan={3} className="py-2">Total</td>
+                              <td className="text-right py-2">
+                                ${Array.isArray(reservation.menu_items) 
+                                  ? reservation.menu_items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0).toFixed(2)
+                                  : 'N/A'}
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-center text-gray-500 italic">No items in this order</p>
+                    )}
                   </div>
                 </div>
-                <button 
-                  onClick={async () => {
-                    const result = await cancelReservation(reservation.id);
-                    if (result.success) {
-                      setReservations(prevReservations => 
-                        prevReservations.filter(res => res.id !== reservation.id)
-                      );
-                    }
-                  }}
-                  className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                >
-                  Cancel Reservation
-                </button>
               </div>
             ))}
           </div>

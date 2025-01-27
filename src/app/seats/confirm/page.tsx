@@ -48,6 +48,7 @@ function ReservationContent() {
   }, []);
 
   const handleProceedToMenu = async () => {
+
     try {
       setIsLoading(true);
       
@@ -66,14 +67,25 @@ function ReservationContent() {
           reservationType
         })
       });
+
+      const reservationDetails = {
+        // userId,
+        selectedSeat,
+        date: date || '',
+        startTime: startTime || '',
+        endTime: endTime || '',
+        guestCount: guestCount || '',
+        reservationType: reservationType || ''
+      };
       
       const data = await response.json();
+      const queryString = new URLSearchParams(reservationDetails).toString();
       
       if (!data.success) {
         throw new Error(data.error || 'Failed to create reservation');
       }
 
-      router.push('/menu');
+      router.push(`/menu?${queryString}`);
       router.refresh();
 
     } catch (error) {

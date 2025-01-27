@@ -14,6 +14,7 @@ interface Reservation {
   is_primary: boolean;
   reservation_group_id: string;
   reservation_state: boolean;
+  menu_items: string; // Added menu_items column
 }
 
 // Get user's active reservations
