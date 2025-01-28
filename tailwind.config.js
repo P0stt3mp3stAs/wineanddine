@@ -9,8 +9,10 @@ module.exports = {
       colors: {
         // background: "var(--background)",
         // foreground: "var(--foreground)",
+        c5: '#e4cab8',
         c6: '#D3A789',
         c7: '#B47659',
+        c75: '#d0432f',
         c8: '#643B2B',
         c9: '#593229',
       },
