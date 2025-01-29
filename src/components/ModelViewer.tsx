@@ -161,6 +161,7 @@ const FirstPersonController = () => {
   const playerHitboxRef = useRef<THREE.Mesh>();
   const moveState = useRef({ forward: false, backward: false, left: false, right: false, running: false });
   const velocity = useRef(new THREE.Vector3());
+  const initialRotationSet = useRef(false);
 
   const moveSpeed = 0.1;
   const runningMultiplier = 2;
@@ -168,6 +169,11 @@ const FirstPersonController = () => {
   useEffect(() => {
     const controls = new PointerLockControls(camera, gl.domElement);
     controlsRef.current = controls;
+
+    if (!initialRotationSet.current) {
+      camera.rotation.set(0, -Math.PI / 2, 0);
+      initialRotationSet.current = true;
+    }
 
     const handleLock = () => {
       console.log('PointerLock activated');
@@ -326,22 +332,24 @@ const Crosshair = () => (
   }} />
 );
 
+import WineAnimation from '@/components/WineGlassText';
 const LoadingScreen = () => {
   const { progress, loaded, total } = useProgress();
   
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-c7">
       <div className="text-center">
-        <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+        <WineAnimation />
+        <div className="w-64 h-2 bg-c5 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-green-500 transition-all duration-300 ease-out"
+            className="h-full bg-c9 transition-all duration-300 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <div className="mt-4 text-white">
+        <div className="mt-4 text-c9">
           Loading Models: {Math.round(progress)}%
           <br />
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-c9">
             ({loaded}/{total} assets loaded)
           </span>
         </div>
@@ -456,6 +464,10 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
           <Model 
             url="/models/counter/counter.gltf" 
             hitboxDimensions={{ width: 0.5, height: 1, depth: 1.3, offsetZ: 0.65, offsetX: 1.5, offsetY: 0.5 }}
+          />
+
+          <Model 
+            url="/models/art/art.gltf" 
           />
           
                     {/* Interactive models */}
