@@ -1,12 +1,13 @@
 import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
+import { useGLTF, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, SSAO, Bloom } from '@react-three/postprocessing';
 import dynamic from 'next/dynamic';
 import { BlendFunction } from 'postprocessing';
 import { ContactShadows, Environment } from '@react-three/drei';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
+
 // Types
 interface ModelProps {
   url: string;
@@ -325,24 +326,49 @@ const Crosshair = () => (
   }} />
 );
 
+const LoadingScreen = () => {
+  const { progress, loaded, total } = useProgress();
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+      <div className="text-center">
+        <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-green-500 transition-all duration-300 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="mt-4 text-white">
+          Loading Models: {Math.round(progress)}%
+          <br />
+          <span className="text-sm text-gray-400">
+            ({loaded}/{total} assets loaded)
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Main ModelViewer component
 const ModelViewer: React.FC<ModelViewerProps> = ({ 
   availableSeats = [], 
   onSeatSelect, 
   onLoadingChange 
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const { active } = useProgress();
+
   useEffect(() => {
+    setIsLoading(active);
     if (onLoadingChange) {
-      onLoadingChange(true);
-      const timeout = setTimeout(() => {
-        onLoadingChange(false);
-      }, 0);
-      return () => clearTimeout(timeout);
+      onLoadingChange(active);
     }
-  }, [onLoadingChange]);
+  }, [active, onLoadingChange]);
 
   return (
     <div className="w-full h-screen">
+      {isLoading && <LoadingScreen />}
       <Canvas
         shadows
         camera={{
