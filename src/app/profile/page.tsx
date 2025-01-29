@@ -148,6 +148,10 @@ return (
                     <span className="text-xs sm:text-sm text-c5">Type</span>
                     <p className="font-medium text-c5 text-sm sm:text-base">{reservation.reservation_type}</p>
                   </div>
+                  <div className="mb-2 sm:mb-0">
+                    <span className="text-xs sm:text-sm text-c5">Seat</span>
+                    <p className="font-medium text-c5 text-sm sm:text-base">{reservation.seat_id}</p>
+                  </div>
                 </div>
                 
                 {cancellingReservationId === reservation.id ? (

@@ -1,291 +1,329 @@
-'use client';
-
-import React, { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { 
-  PointerLockControls,
-  useGLTF,
-  Html,
-  Preload,
-  useProgress
-} from '@react-three/drei';
-import dynamic from 'next/dynamic';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
-import { Environment, ContactShadows } from '@react-three/drei';
 import { EffectComposer, SSAO, Bloom } from '@react-three/postprocessing';
-// import { Mesh, Object3D, Material, MeshStandardMaterial } from 'three';
-// import { PointerLockControls as PointerLockControlsImpl } from 'three/examples/jsm/controls/PointerLockControls';
-// import { group } from 'console';
-
-const Crosshair: React.FC = () => {
-  return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-4 h-4 flex items-center justify-center">
-        <div className="absolute w-4 h-0.5 bg-black opacity-70"></div>
-        <div className="absolute w-0.5 h-4 bg-black opacity-70"></div>
-      </div>
-    </div>
-  );
-};
-
-interface ModelViewerProps {
-  availableSeats?: string[];
-  onSeatSelect?: (seatId: string) => void;
-  onLoadingChange?: (loading: boolean) => void;
-}
-
+import dynamic from 'next/dynamic';
+import { BlendFunction } from 'postprocessing';
+import { ContactShadows, Environment } from '@react-three/drei';
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
+// Types
 interface ModelProps {
   url: string;
   position?: [number, number, number];
   id?: string;
   isAvailable?: boolean;
   onSelect?: (id: string) => void;
+  isBase?: boolean;
+  hitboxDimensions?: {
+    width: number;
+    height: number;
+    depth: number;
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
+  };
 }
 
-
-// Loading component for individual models
-function ModelLoader({ url }: { url: string }) {
-  const { progress } = useProgress();
-  useGLTF(url, true);
-  return (
-    <Html center>
-      <div className="text-white text-sm">
-        Loading {Math.round(progress)}%
-      </div>
-    </Html>
-  );
+interface ModelViewerProps {
+  availableSeats?: string[];
+  onSeatSelect?: (id: string) => void;
+  onLoadingChange?: (isLoading: boolean) => void;
 }
 
-// Enhanced First Person Controller with WASD movement
-const FirstPersonController = () => {
-  const controlsRef = useRef();
-  const { camera } = useThree();
-
-  // Movement parameters
-  const moveSpeed = 0.05;
-  const runningMultiplier = 1.5;
-  const moveState = useRef({
-    forward: false,
-    backward: false,
-    left: false,
-    right: false,
-    running: false
-  });
-
-  // Smooth movement parameters
-  const velocity = useRef(new THREE.Vector3());
-  const acceleration = 0.08;
-  const deceleration = 0.85;
-  const maxVelocity = 0.2;
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.code) {
-        case 'KeyW':
-        case 'ArrowUp':
-          moveState.current.forward = true;
-          break;
-        case 'KeyS':
-        case 'ArrowDown':
-          moveState.current.backward = true;
-          break;
-        case 'KeyA':
-        case 'ArrowLeft':
-          moveState.current.left = true;
-          break;
-        case 'KeyD':
-        case 'ArrowRight':
-          moveState.current.right = true;
-          break;
-        case 'ShiftLeft':
-          moveState.current.running = true;
-          break;
-      }
-    };
-
-    const handleKeyUp = (event: KeyboardEvent) => {
-      switch (event.code) {
-        case 'KeyW':
-        case 'ArrowUp':
-          moveState.current.forward = false;
-          break;
-        case 'KeyS':
-        case 'ArrowDown':
-          moveState.current.backward = false;
-          break;
-        case 'KeyA':
-        case 'ArrowLeft':
-          moveState.current.left = false;
-          break;
-        case 'KeyD':
-        case 'ArrowRight':
-          moveState.current.right = false;
-          break;
-        case 'ShiftLeft':
-          moveState.current.running = false;
-          break;
-      }
-    };
-
-    const handleBlur = () => {
-      moveState.current = {
-        forward: false,
-        backward: false,
-        left: false,
-        right: false,
-        running: false
-      };
-      velocity.current.set(0, 0, 0);
-    };
-
-    window.addEventListener('blur', handleBlur);
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      window.removeEventListener('blur', handleBlur);
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
-
-  useFrame(() => {
-    if (!(controlsRef.current as any)?.isLocked) return;
-
-    const currentSpeed = moveState.current.running ? 
-      moveSpeed * runningMultiplier : 
-      moveSpeed;
-
-    // Get camera direction
-    const direction = new THREE.Vector3();
-    const frontVector = new THREE.Vector3();
-    const sideVector = new THREE.Vector3();
-    const rotation = new THREE.Vector3();
-
-    // Update movement based on camera direction
-    camera.getWorldDirection(direction);
-    frontVector.setFromMatrixColumn(camera.matrix, 0);
-    sideVector.setFromMatrixColumn(camera.matrix, 0);
-    rotation.set(0, 0, 0);
-
-    // Calculate movement direction
-    direction.y = 0;
-    direction.normalize();
-
-    // Apply movement
-    if (moveState.current.forward) {
-      camera.position.addScaledVector(direction, currentSpeed);
-    }
-    if (moveState.current.backward) {
-      camera.position.addScaledVector(direction, -currentSpeed);
-    }
-    if (moveState.current.left) {
-      camera.position.addScaledVector(sideVector, -currentSpeed);
-    }
-    if (moveState.current.right) {
-      camera.position.addScaledVector(sideVector, currentSpeed);
-    }
-  });
-
-  return (
-    <PointerLockControls 
-      ref={controlsRef as any}
-      onUnlock={() => {
-        const startExploring = document.getElementById('startExploring');
-        if (startExploring) startExploring.style.display = 'flex';
-      }}
-    />
-  );
-};
-
-// Enhanced Model component with loading state
-function Model({ url, position, id, isAvailable, onSelect }: ModelProps) {
-  const { scene } = useGLTF(url);
+// Model component
+function Model({ url, position, id, isAvailable, onSelect, hitboxDimensions, isBase }: ModelProps) {
   const [hovered, setHovered] = useState(false);
   const meshRef = useRef<THREE.Group>(null);
-  const { camera } = useThree();
+  const hitboxRef = useRef<THREE.Mesh | null>(null);
+  const { scene } = useGLTF(url) as any;
+  const originalMaterials = useRef<Map<THREE.Mesh, THREE.Material | THREE.Material[]>>(new Map());
   
-  // Create a raycaster for center screen detection
-  const raycaster = new THREE.Raycaster();
-  const center = new THREE.Vector2(0, 0); // Center of screen
-
-  useFrame(() => {
-    if (meshRef.current && id && isAvailable) {
-      // Update raycaster with center screen position
-      raycaster.setFromCamera(center, camera);
-      
-      // Check for intersection with the model
-      const intersects = raycaster.intersectObject(meshRef.current, true);
-      
-      // Update hover state based on intersection
-      setHovered(intersects.length > 0);
-    }
+  // Create highlight materials
+  const availableHighlight = new THREE.MeshStandardMaterial({
+    color: 0x00ff00,  // Green
+    transparent: true,
+    opacity: 0.8,
+    emissive: 0x00ff00,
+    emissiveIntensity: 0.5
   });
-  
+
+  const unavailableHighlight = new THREE.MeshStandardMaterial({
+    color: 0xff0000,  // Red
+    transparent: true,
+    opacity: 0.8,
+    emissive: 0xff0000,
+    emissiveIntensity: 0.5
+  });
+
+  // Store original materials on first render
   useEffect(() => {
-    if (meshRef.current) {
-      meshRef.current.traverse((child) => {
+    if (meshRef.current && id) {  // Only for seats (elements with id)
+      scene.traverse((child: THREE.Mesh) => {
         if (child instanceof THREE.Mesh) {
-          // Enable shadows
-          child.castShadow = true;
-          child.receiveShadow = true;
-          
-          // Improve material quality
-          if (child.material) {
-            child.material.roughness = 0.7;
-            child.material.metalness = 0.3;
-            child.material.envMapIntensity = 1;
-            
-            if (id) {
-              if (isAvailable) {
-                if (id.startsWith('stool')) {
-                  child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
-                  child.material.emissiveIntensity = hovered ? 0.3 : 0.1;
-                } else {
-                  child.material.emissive = new THREE.Color(hovered ? 0x00ff00 : 0x004400);
-                  child.material.emissiveIntensity = hovered ? 0.2 : 0.1;
-                }
-              } else {
-                child.material.emissive = new THREE.Color(0xff9999);
-                child.material.emissiveIntensity = 0.1;
-              }
+          originalMaterials.current.set(child, child.material);
+        }
+      });
+    }
+  }, [id, scene]);
+
+  // Handle hover state changes
+  useEffect(() => {
+    if (meshRef.current && id) {  // Only for seats
+      scene.traverse((child: THREE.Mesh) => {
+        if (child instanceof THREE.Mesh) {
+          if (hovered) {
+            // Apply highlight material based on availability
+            child.material = isAvailable ? availableHighlight : unavailableHighlight;
+          } else {
+            // Restore original material
+            const originalMaterial = originalMaterials.current.get(child);
+            if (originalMaterial) {
+              child.material = originalMaterial;
             }
           }
         }
       });
     }
-  }, [hovered, isAvailable, id]);
-  
+  }, [hovered, isAvailable, id, scene]);
+
+  useEffect(() => {
+    if (meshRef.current && hitboxDimensions) {
+      const hitboxGeometry = new THREE.BoxGeometry(
+        hitboxDimensions.width,
+        hitboxDimensions.height,
+        hitboxDimensions.depth
+      );
+      const hitboxMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0xff0000,
+        opacity: 0,     // Make hitbox invisible
+        transparent: true
+      });
+      const hitbox = new THREE.Mesh(hitboxGeometry, hitboxMaterial);
+      
+      hitbox.position.set(
+        hitboxDimensions.offsetX || 0,
+        hitboxDimensions.offsetY || 0,
+        hitboxDimensions.offsetZ || 0
+      );
+      
+      hitbox.userData.isHitbox = true;
+      hitbox.userData.isBaseHitbox = isBase;
+      meshRef.current.add(hitbox);
+      hitboxRef.current = hitbox;
+    }
+  }, [hitboxDimensions, isBase]);
+
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+    }
+  }, [scene]);
+
   return (
-    <Suspense fallback={<ModelLoader url={url} />}>
-      <group 
-        position={position}
-        ref={meshRef}
-        onClick={() => {
-        // onClick={(event) => {
-          if (id && isAvailable && hovered && onSelect) {
-            // event.stopPropagation();
-            onSelect(id);
-          }
-        }}
-        onPointerOver={(event) => {
-          if (id && isAvailable) {
-            event.stopPropagation();
-            setHovered(true);
-          }
-        }}
-        onPointerOut={(event) => {
-          if (id && isAvailable) {
-            event.stopPropagation();
-            setHovered(false);
-          }
-        }}
-      >
-        <primitive object={scene} scale={1} />
-      </group>
-    </Suspense>
+    <group
+      ref={meshRef}
+      position={position}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (id && onSelect && isAvailable) {
+          onSelect(id);
+        }
+      }}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        if (id) {  // Only enable hover effect for seats
+          setHovered(true);
+        }
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        if (id) {  // Only enable hover effect for seats
+          setHovered(false);
+        }
+      }}
+    >
+      <primitive object={scene} />
+    </group>
   );
 }
+
+// FirstPersonController component
+const FirstPersonController = () => {
+  const { camera, scene, gl } = useThree();
+  const controlsRef = useRef<PointerLockControls | null>(null);
+  const playerHitboxRef = useRef<THREE.Mesh>();
+  const moveState = useRef({ forward: false, backward: false, left: false, right: false, running: false });
+  const velocity = useRef(new THREE.Vector3());
+
+  const moveSpeed = 0.1;
+  const runningMultiplier = 2;
+
+  useEffect(() => {
+    const controls = new PointerLockControls(camera, gl.domElement);
+    controlsRef.current = controls;
+
+    const handleLock = () => {
+      console.log('PointerLock activated');
+    };
+
+    const handleUnlock = () => {
+      console.log('PointerLock deactivated');
+    };
+
+    controls.addEventListener('lock', handleLock);
+    controls.addEventListener('unlock', handleUnlock);
+
+    return () => {
+      controls.removeEventListener('lock', handleLock);
+      controls.removeEventListener('unlock', handleUnlock);
+      controls.dispose();
+    };
+  }, [camera, gl]);
+
+  useEffect(() => {
+    const handleClick = () => {
+      controlsRef.current?.lock();
+    };
+
+    document.addEventListener('click', handleClick);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Create player hitbox
+    const playerHitboxGeometry = new THREE.CylinderGeometry(0.3, 0.3, 1.8, 8);
+    const playerHitboxMaterial = new THREE.MeshBasicMaterial({ 
+      color: 0x00ff00,
+      opacity: 0.5,
+      transparent: true
+    });
+    const playerHitbox = new THREE.Mesh(playerHitboxGeometry, playerHitboxMaterial);
+    playerHitbox.position.y = 0.9;
+    scene.add(playerHitbox);
+    playerHitboxRef.current = playerHitbox;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'KeyW': moveState.current.forward = true; break;
+        case 'KeyS': moveState.current.backward = true; break;
+        case 'KeyA': moveState.current.left = true; break;
+        case 'KeyD': moveState.current.right = true; break;
+        case 'ShiftLeft': moveState.current.running = true; break;
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'KeyW': moveState.current.forward = false; break;
+        case 'KeyS': moveState.current.backward = false; break;
+        case 'KeyA': moveState.current.left = false; break;
+        case 'KeyD': moveState.current.right = false; break;
+        case 'ShiftLeft': moveState.current.running = false; break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [scene]);
+
+  useFrame(() => {
+    if (!controlsRef.current?.isLocked) return;
+
+    const currentSpeed = moveState.current.running ? moveSpeed * runningMultiplier : moveSpeed;
+
+    // Get camera's direction vectors
+    const forward = new THREE.Vector3();
+    const right = new THREE.Vector3();
+    
+    // Get forward direction (excluding y component for ground movement)
+    camera.getWorldDirection(forward);
+    forward.y = 0;
+    forward.normalize();
+    
+    // Get right direction by crossing forward with up vector
+    right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+
+    // Calculate movement vector based on camera orientation
+    const moveVector = new THREE.Vector3(0, 0, 0);
+    
+    if (moveState.current.forward) moveVector.add(forward.multiplyScalar(currentSpeed));
+    if (moveState.current.backward) moveVector.add(forward.multiplyScalar(-currentSpeed));
+    if (moveState.current.right) moveVector.add(right.multiplyScalar(currentSpeed));
+    if (moveState.current.left) moveVector.add(right.multiplyScalar(-currentSpeed));
+
+    // Check collisions
+    const newPosition = camera.position.clone().add(moveVector);
+    playerHitboxRef.current!.position.copy(newPosition);
+    playerHitboxRef.current!.position.y = 0.9;
+
+    let collision = false;
+
+    // Check collision with object hitboxes
+    scene.traverse((object) => {
+      if (object.userData.isHitbox && object !== playerHitboxRef.current) {
+        const objectBoundingBox = new THREE.Box3().setFromObject(object);
+        const playerBoundingBox = new THREE.Box3().setFromObject(playerHitboxRef.current!);
+        if (object.userData.isBaseHitbox) {
+          if (!objectBoundingBox.containsPoint(newPosition)) {
+            collision = true;
+          }
+        } else if (objectBoundingBox.intersectsBox(playerBoundingBox)) {
+          collision = true;
+        }
+      }
+    });
+
+    // Check if player is within base boundaries
+    const baseBoundaries = {
+      minX: -10, maxX: 10,
+      minZ: -10, maxZ: 10
+    };
+    if (
+      newPosition.x < baseBoundaries.minX || newPosition.x > baseBoundaries.maxX ||
+      newPosition.z < baseBoundaries.minZ || newPosition.z > baseBoundaries.maxZ
+    ) {
+      collision = true;
+    }
+
+    // Apply movement if no collision
+    if (!collision) {
+      camera.position.add(moveVector);
+      playerHitboxRef.current!.position.copy(camera.position);
+      playerHitboxRef.current!.position.y = 0.9;
+    }
+  });
+
+  return null;
+};
+
+// Crosshair component
+const Crosshair = () => (
+  <div style={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '20px',
+    height: '20px',
+    border: '2px solid white',
+    borderRadius: '50%',
+    transform: 'translate(-50%, -50%)',
+    pointerEvents: 'none'
+  }} />
+);
 
 // Main ModelViewer component
 const ModelViewer: React.FC<ModelViewerProps> = ({ 
@@ -316,7 +354,6 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
         gl={{
           antialias: true,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1,
           outputEncoding: THREE.sRGBEncoding
         }}
       >
@@ -353,16 +390,16 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
           />
           
           <EffectComposer>
-            <SSAO 
-              radius={0.1}
-              intensity={150}
-              luminanceInfluence={0.5}
-              color={new THREE.Color('black')}
-              worldDistanceThreshold={1.0}
-              worldDistanceFalloff={0.1}
-              worldProximityThreshold={1.0}
-              worldProximityFalloff={0.1}
-            />
+          <SSAO 
+            radius={0.1}
+            intensity={150}
+            luminanceInfluence={0.5}
+            color={new THREE.Color('black')}
+            worldDistanceThreshold={0.5} // Add this
+            worldDistanceFalloff={0.1}   // Add this
+            worldProximityThreshold={6}  // Add this
+            worldProximityFalloff={1}    // Add this
+          />
             <Bloom 
               intensity={0.1}
               luminanceThreshold={0.9}
@@ -371,82 +408,108 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
           </EffectComposer>
           
           {/* Base models */}
-          <Model url="/models/base/base.gltf" />
+          <Model 
+            url="/models/base/base.gltf" 
+            // hitboxDimensions={{ width: 4.23, height: 1.4, depth: 4.3, offsetZ: 0.025, offsetX: 0, offsetY: 0.65 }}
+            hitboxDimensions={{
+              width: 4.23,
+              height: 1.8,
+              depth: 4.3,
+              offsetX: 0,
+              offsetY: 0.65,
+              offsetZ: 0.025
+            }}
+            isBase={true}
+          />
 
-          <Model url="/models/stage/stage.gltf" />
+          <Model 
+            url="/models/stage/stage.gltf" 
+            hitboxDimensions={{ width: 1, height: 1, depth: 0.95, offsetZ: 1.5, offsetX: -1.5, offsetY: 0.5 }}
+          />
 
-          <Model url="/models/counter/counter.gltf" />
-
-          <Model url="/models/art/art.gltf" />
+          <Model 
+            url="/models/counter/counter.gltf" 
+            hitboxDimensions={{ width: 0.5, height: 1, depth: 1.3, offsetZ: 0.65, offsetX: 1.5, offsetY: 0.5 }}
+          />
           
-          {/* Interactive models */}
+                    {/* Interactive models */}
           <Model 
             url="/models/couch/couch.gltf" 
             id="couch" 
             isAvailable={availableSeats.includes('couch')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 1, height: 1, depth: 1.5, offsetZ: -1.2, offsetX: 1.3, offsetY: 0.5 }}
           />
           <Model 
             url="/models/2table/2table.gltf" 
             id="2table"
             isAvailable={availableSeats.includes('2table')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.3, height: 1, depth: 0.5, offsetZ: 0.3, offsetX: -1.5, offsetY: 0.5 }}
           />
           <Model 
             url="/models/2table1/2table1.gltf" 
             id="2table1"
             isAvailable={availableSeats.includes('2table1')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.3, height: 1, depth: 0.5, offsetZ: -1.65, offsetX: -1.5, offsetY: 0.5 }}
           />
           <Model 
             url="/models/2table2/2table2.gltf" 
             id="2table2"
             isAvailable={availableSeats.includes('2table2')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.5, height: 1, depth: 0.3, offsetZ: 1.7, offsetX: -0.2, offsetY: 0.5 }}
           />
           <Model 
             url="/models/2table3/2table3.gltf" 
             id="2table3"
             isAvailable={availableSeats.includes('2table3')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.5, height: 1, depth: 0.3, offsetZ: 1.7, offsetX: 0.8, offsetY: 0.5 }}
           />
           <Model 
             url="/models/4table/4table.gltf" 
             id="4table"
             isAvailable={availableSeats.includes('4table')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.5, height: 1, depth: 0.5, offsetZ: -1.65, offsetX: -0.6, offsetY: 0.5 }}
           />
           <Model 
             url="/models/4table1/4table1.gltf" 
             id="4table1"
             isAvailable={availableSeats.includes('4table1')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.5, height: 1, depth: 0.5, offsetZ: -0.75, offsetX: -1.5, offsetY: 0.5 }}
           />
           <Model 
             url="/models/stool/stool.gltf" 
             id="stool"
             isAvailable={availableSeats.includes('stool')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.2, height: 1, depth: 0.2, offsetZ: 1.15, offsetX: 1.25, offsetY: 0.5 }}
           />
           <Model 
             url="/models/stool1/stool1.gltf" 
             id="stool1"
             isAvailable={availableSeats.includes('stool1')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.2, height: 1, depth: 0.2, offsetZ: 0.825, offsetX: 1.25, offsetY: 0.5 }}
           />
           <Model 
             url="/models/stool2/stool2.gltf" 
             id="stool2"
             isAvailable={availableSeats.includes('stool2')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.2, height: 1, depth: 0.2, offsetZ: 0.475, offsetX: 1.25, offsetY: 0.5 }}
           />
           <Model 
             url="/models/stool3/stool3.gltf" 
             id="stool3"
             isAvailable={availableSeats.includes('stool3')}
             onSelect={onSeatSelect}
+            hitboxDimensions={{ width: 0.2, height: 1, depth: 0.2, offsetZ: 0.15, offsetX: 1.25, offsetY: 0.5 }}
           />
-          {/* <Preload all /> */}
         </Suspense>
         <FirstPersonController />
       </Canvas>
