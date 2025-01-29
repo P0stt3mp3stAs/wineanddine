@@ -138,12 +138,12 @@ function SeatsContent() {
   return (
     <main className="h-screen flex flex-col relative">
       {/* Header */}
-      <div className="bg-gray-800 text-white p-4 text-center mt-20">
+      {/* <div className="bg-gray-800 text-white p-4 text-center mt-20">
         <h1 className="text-3xl font-black">Wine and Dine Seats</h1>
-      </div>
+      </div> */}
 
       {/* Info Panel */}
-      <div className="absolute top-28 left-4 z-10 bg-white p-4 rounded-lg shadow-lg">
+      {/* <div className="absolute top-28 left-4 z-10 bg-white p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-bold mb-2">Available Seats</h2>
         <p className="text-sm text-gray-600">Green seats are available for selection</p>
         <p className="text-sm text-gray-600">Red seats are already reserved</p>
@@ -153,10 +153,10 @@ function SeatsContent() {
           <p><strong>Guests:</strong> {guestCount}</p>
           <p><strong>Type:</strong> {reservationType}</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Controls Instructions */}
-      <div className="absolute bottom-4 left-4 z-10 bg-black bg-opacity-75 text-white p-4 rounded-lg">
+      {/* <div className="absolute bottom-4 left-4 z-10 bg-black bg-opacity-75 text-white p-4 rounded-lg">
         <h3 className="font-bold mb-2">Controls:</h3>
         <div className="grid grid-cols-2 gap-2">
           <div>
@@ -184,7 +184,7 @@ function SeatsContent() {
           <kbd className="px-2 py-1 bg-gray-700 rounded">Mouse</kbd>
           Look Around
         </p>
-      </div>
+      </div> */}
 
       {/* 3D Viewer */}
       <div className="flex-1">
