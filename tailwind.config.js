@@ -23,90 +23,30 @@ module.exports = {
       },
       keyframes: {
         spinLabel: {
-          '0%': {
-            marginLeft: '0%',
-            borderLeftWidth: '0px',
-            marginRight: '100%',
-            borderRightWidth: '2px',
-          },
-          '49%': {
-            borderLeftWidth: '0px',
-            borderRightWidth: '2px',
-          },
-          '50%': {
-            marginLeft: '0%',
-            borderLeftWidth: '2px',
-            marginRight: '0%',
-            borderRightWidth: '0px',
-          },
-          '98%': {
-            borderLeftWidth: '2px',
-          },
-          '99%': {
-            marginLeft: '100%',
-            borderLeftWidth: '0px',
-            marginRight: '0%',
-            borderRightWidth: '0px',
-          },
-          '100%': {
-            marginLeft: '0%',
-            borderLeftWidth: '0px',
-            marginRight: '100%',
-            borderRightWidth: '0px',
-          },
+          '0%': { marginLeft: '0%', borderLeftWidth: '0px', marginRight: '100%', borderRightWidth: '2px' },
+          '49%': { borderLeftWidth: '0px', borderRightWidth: '2px' },
+          '50%': { marginLeft: '0%', borderLeftWidth: '2px', marginRight: '0%', borderRightWidth: '0px' },
+          '98%': { borderLeftWidth: '2px' },
+          '99%': { marginLeft: '100%', borderLeftWidth: '0px', marginRight: '0%', borderRightWidth: '0px' },
+          '100%': { marginLeft: '0%', borderLeftWidth: '0px', marginRight: '100%', borderRightWidth: '0px' },
         },
-        spinShadow: {
-          '0%': {
-            left: '0',
-            width: '50px',
-            marginLeft: '0px',
-          },
-          '50%': {
-            left: '0',
-            width: '0px',
-            marginLeft: '0px',
-          },
-          '51%': {
-            marginLeft: '50px',
-          },
-          '100%': {
-            width: '50px',
-            marginLeft: '0',
-          },
+        'spin-shadow': {
+          '0%': { left: '0', width: '50px', marginLeft: '0px' },
+          '50%': { left: '0', width: '0px', marginLeft: '0px' },
+          '51%': { marginLeft: '50px' },
+          '100%': { width: '50px', marginLeft: '0' },
         },
-        spinGlass: {
-          '0%': {
-            left: '25px',
-            zIndex: '20',
-          },
-          '50%': {
-            left: '185px',
-            zIndex: '20',
-          },
-          '51%': {
-            zIndex: '0',
-          },
-          '100%': {
-            left: '25px',
-            zIndex: '0',
-          },
+        'spin-glass': {
+          '0%': { left: '25px', zIndex: '20' },
+          '50%': { left: '185px', zIndex: '20' },
+          '51%': { zIndex: '0' },
+          '100%': { left: '25px', zIndex: '0' },
         },
-        spinCork: {
-          '0%': {
-            left: '180px',
-            zIndex: '0',
-          },
-          '50%': {
-            left: '55px',
-            zIndex: '0',
-          },
-          '51%': {
-            zIndex: '20',
-          },
-          '100%': {
-            left: '180px',
-            zIndex: '20',
-          },
+        'spin-cork': {
+          '0%': { left: '180px', zIndex: '0' },
+          '50%': { left: '55px', zIndex: '0' },
+          '51%': { zIndex: '20' },
+          '100%': { left: '180px', zIndex: '20' },
         },
       },
     },
