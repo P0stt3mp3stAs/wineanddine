@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { BlendFunction } from 'postprocessing';
 import { ContactShadows, Environment } from '@react-three/drei';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
-import Joystick from '@/components/Joystick';
 
 // Types
 interface ModelProps {
@@ -561,7 +560,6 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
         <FirstPersonController joystickMovement={joystickMovement} />
       </Canvas>
       <Crosshair />
-      <Joystick onMove={handleJoystickMove} />
     </div>
   );
 };

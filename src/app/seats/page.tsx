@@ -3,6 +3,7 @@
 import ModelViewer from '@/components/ModelViewer';
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import RestaurantModel from '@/components/RestaurantModel';
 
 interface AvailabilityData {
   availableSeats: string[];
@@ -123,18 +124,6 @@ function SeatsContent() {
     router.push(`/seats/confirm?${params.toString()}`);
   };
 
-  // const handleModelLoadingChange = (loading: boolean) => {
-  //   setModelLoading(loading);
-  //   if (!loading) {
-  //     setIs3DReady(true);
-  //   }
-  // };
-
-  // // Show loading screen while either the model is loading or 3D isn't ready
-  // if (modelLoading || !is3DReady) {
-  //   return <LoadingScreen message={loadingMessage} />;
-  // }
-
   return (
     <main className="h-screen flex flex-col relative">
       {/* Header */}
@@ -202,7 +191,8 @@ function SeatsContent() {
 export default function SeatsPage() {
   return (
     <Suspense fallback={<LoadingScreen message="Initializing..." />}>
-      <SeatsContent />
+      {/* <SeatsContent /> */}
+      <RestaurantModel />
     </Suspense>
   );
 }

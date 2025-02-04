@@ -18,6 +18,9 @@ const Navbar = () => {
             <Link href="/inspect-menu" className="text-c9 hover:text-c5 hover:bg-c9 px-3 py-2 rounded-xl text-sm transition-colors duration-200">
               Menu
             </Link>
+            <Link href="/seats" className="text-c9 hover:text-c5 hover:bg-c9 block px-3 py-2 rounded-md text-base font-medium">
+              seats
+            </Link>
           </div>
 
           {/* Logo */}
@@ -65,6 +68,9 @@ const Navbar = () => {
             </Link>
             <Link href="/inspect-menu" className="text-c9 hover:text-c5 hover:bg-c9 block px-3 py-2 rounded-md text-base font-medium">
               Menu
+            </Link>
+            <Link href="/seats" className="text-c9 hover:text-c5 hover:bg-c9 block px-3 py-2 rounded-md text-base font-medium">
+              seats
             </Link>
             <Link href="/dashboard" className="text-c9 hover:text-c9 hover:bg-c7 block px-3 py-2 rounded-md text-base font-medium">
               Dashboard
