@@ -9,7 +9,7 @@ export default function Home() {
       
       <div className="container mx-auto px-4 py-12 relative z-10">
         <header className="text-center mb-16">
-          <h1 className="text-6xl md:text-8xl font-extrabold mb-4 text-c8 drop-shadow-lg mt-20">
+          <h1 className="text-6xl md:text-8xl font-extrabold mb-4 text-c6 drop-shadow-lg mt-20">
             Wine N' Dine
           </h1>
           <p className="text-2xl md:text-3xl font-light italic text-c6">Where Flavors Whisper and Aromas Dance</p>
