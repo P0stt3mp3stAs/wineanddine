@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { confirmSignUp, signIn } from 'aws-amplify/auth';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
+import { motion } from 'framer-motion';
 
 function VerifyContent() {
   const router = useRouter();
@@ -71,67 +72,67 @@ function VerifyContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Verify your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleVerify}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-3xl p-8 w-full max-w-md shadow-xl"
+      >
+        <h2 className="text-4xl font-bold text-white text-center mb-8">Verify Account</h2>
+        <form onSubmit={handleVerify} className="space-y-6">
           {error && (
-            <div className="text-red-600 text-center text-sm">{error}</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-red-500 bg-opacity-20 text-white p-3 rounded-lg text-center"
+            >
+              {error}
+            </motion.div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+          <div className="space-y-4">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <input
-                id="email"
-                name="email"
                 type="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="Email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                disabled={loading}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <input
-                id="password"
-                name="password"
                 type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                disabled={loading}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <input
-                id="code"
-                name="code"
                 type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Verification code"
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
+                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                disabled={loading}
               />
-            </div>
+            </motion.div>
           </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading || !isConfigured}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Verifying...' : 'Verify & Sign In'}
-            </button>
-          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={loading || !isConfigured}
+            className="w-full px-4 py-3 bg-c75 text-white rounded-lg font-semibold transition duration-200 hover:bg-c75-dark focus:outline-none focus:ring-2 focus:ring-c75 focus:ring-offset-2 focus:ring-offset-gray-100"
+          >
+            {loading ? 'Verifying...' : 'Verify & Sign In'}
+          </motion.button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -139,8 +140,8 @@ function VerifyContent() {
 export default function VerifyPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
       </div>
     }>
       <VerifyContent />

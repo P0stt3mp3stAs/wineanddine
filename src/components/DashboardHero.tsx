@@ -1,106 +1,108 @@
 'use client';
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DashboardHero = () => {
- const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
- const slides = [
-   {
-     title: "Experience Culinary Excellence",
-     description: "Book your table now and indulge in an unforgettable dining experience.",
-     image: "/firstPic.jpeg"
-   },
-   {
-     title: "Private Fine Dining",
-     description: "Enjoy an intimate dining experience in our exclusive private rooms.", 
-     image: "/firstPic.jpeg"
-   },
-   {
-     title: "Seasonal Specialties",
-     description: "Discover our chef's seasonal menu featuring fresh local ingredients.",
-     image: "/firstPic.jpeg"
-   },
-   {
-     title: "Special Events & Occasions",
-     description: "Make your celebrations memorable with our special arrangements.",
-     image: "/firstPic.jpeg"
-   }
- ];
+  const slides = [
+    {
+      title: "Savor Excellence",
+      description: "Indulge in an unforgettable dining experience.",
+      image: "/1.jpeg"
+    },
+    {
+      title: "Premium Dining",
+      description: "Exclusive private rooms for intimate gatherings.",
+      image: "/2.jpeg"
+    },
+    {
+      title: "Seasonal Treats",
+      description: "Fresh local ingredients in our seasonal menu.",
+      image: "/3.jpeg"
+    },
+    {
+      title: "Private Events",
+      description: "Make your celebrations truly memorable.",
+      image: "/4.jpeg"
+    }
+  ];
 
- useEffect(() => {
-   const timer = setInterval(() => {
-     setCurrentSlide((prev) => (prev + 1) % slides.length);
-   }, 5000);
-   return () => clearInterval(timer);
- }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
- const slideStyles = (index: number) => {
-    const isActive = index === currentSlide;
-    const isPrev = (currentSlide === 0 && index === slides.length - 1) || 
-                  (index === currentSlide - 1);
-    const isNext = (currentSlide === slides.length - 1 && index === 0) || 
-                  (index === currentSlide + 1);
-  
-    if (isActive) return "translate-x-0 opacity-100";
-    if (isPrev) return "-translate-x-full opacity-0";
-    if (isNext) return "translate-x-full opacity-0";
-    return "translate-x-full opacity-0";
-  };
+  return (
+    <div className="relative w-full h-[50vh] overflow-hidden bg-black">
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={currentSlide}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={slides[currentSlide].image}
+            alt={slides[currentSlide].title}
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50" />
+        </motion.div>
+      </AnimatePresence>
 
- return (
-   <div className="w-full h-[50vh] bg-c7 relative overflow-hidden">
-     <div className="absolute inset-0">
-       {slides.map((slide, index) => (
-         <div
-           key={index}
-           className={`absolute top-0 left-0 w-full h-full transform transition-all duration-700 ease-in-out ${slideStyles(index)}`}
-         >
-           <div className="h-full flex items-center justify-center px-4">
-             <div className="container mx-auto flex flex-col md:flex-row items-center justify-center gap-8">
-               <div className="flex-1 space-y-6 max-w-xl">
-                <h1 className="text-5xl font-bold text-white leading-tight">
-                   {slide.title}
-                </h1>
-                <p className="text-lg text-white/90">
-                   {slide.description}
-                </p>
-                <button 
-                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                className="bg-c8 text-white px-6 py-3 rounded-md font-medium hover:bg-c9 transition-colors"
-                >
-                Reserve a Table
-                </button>
-               </div>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center text-white p-4 md:p-8 max-w-3xl mt-5">
+          <motion.h1 
+            key={`title-${currentSlide}`}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl md:text-5xl font-bold mb-4"
+          >
+            {slides[currentSlide].title}
+          </motion.h1>
+          <motion.p
+            key={`desc-${currentSlide}`}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg md:text-xl mb-6"
+          >
+            {slides[currentSlide].description}
+          </motion.p>
+          <motion.button
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
+            className="bg-white text-black px-4 py-2 md:px-6 md:py-3 rounded-full text-base md:text-lg font-semibold hover:bg-opacity-90 transition-colors"
+          >
+            Reserve a Table
+          </motion.button>
+        </div>
+      </div>
 
-               <div className="flex-1 relative h-[400px] w-full max-w-xl">
-                 <Image
-                   src={slide.image}
-                   alt="Restaurant Image"
-                   fill
-                   className="object-cover rounded-lg"
-                   priority
-                 />
-               </div>
-             </div>
-           </div>
-         </div>
-       ))}
-     </div>
-
-     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-       {slides.map((_, index) => (
-         <button
-           key={index}
-           onClick={() => setCurrentSlide(index)}
-           className={`w-3 h-3 rounded-full transition-all duration-300 ${
-             index === currentSlide ? "bg-white" : "bg-white/50"
-           }`}
-         />
-       ))}
-     </div>
-   </div>
- );
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              index === currentSlide ? "bg-white scale-125" : "bg-white/50"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default DashboardHero;

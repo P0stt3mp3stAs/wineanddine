@@ -1,36 +1,69 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-export default async function Home() {
-
+export default function Home() {
   return (
-    <main>
-      <div className="bg-c8 text-white p-4 text-center mt-24">
-        <h1 className="text-3xl font-black">Wine and Dine</h1>
+    <main className="min-h-screen bg-c9 text-c8 overflow-hidden relative">
+      <div className="absolute inset-0 bg-c7 opacity-50 transform rotate-45 scale-150"></div>
+      
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        <header className="text-center mb-16">
+          <h1 className="text-6xl md:text-8xl font-extrabold mb-4 text-c8 drop-shadow-lg mt-20">
+            Wine N' Dine
+          </h1>
+          <p className="text-2xl md:text-3xl font-light italic text-c6">Where Flavors Whisper and Aromas Dance</p>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8 bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg p-8 rounded-3xl shadow-xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-c75">Culinary Symphony</h2>
+            <p className="text-xl text-c8">Embark on a gastronomic journey where each bite is a note and every sip a melody. Our dishes are composed to delight your senses in perfect harmony.</p>
+            <div className="flex flex-wrap gap-4">
+              <Link href="/menu">
+                <button className="bg-c75 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-c8 transition-all transform hover:scale-110">
+                  Explore Our Menu
+                </button>
+              </Link>
+              <Link href="/reserve">
+                <button className="bg-c4 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-c7 transition-all transform hover:scale-110">
+                  Reserve Your Table
+                </button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="relative h-96 w-96 mx-auto group">
+            <div className="absolute inset-0 -translate-x-20 -translate-y-20 animate-float transition-transform duration-300 group-hover:-translate-x-24 group-hover:-translate-y-24">
+              <Image src="/glass-wine.svg" alt="Wine Glass" layout="fill" />
+            </div>
+            <div className="absolute inset-0 translate-x-14 translate-y-20 animate-float transition-transform duration-300 group-hover:translate-x-20 group-hover:translate-y-24">
+              <Image src="/pasta-plate.svg" alt="Pasta Plate" layout="fill" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-24 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-12 text-c8">Our Signature Experiences</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: "Whisper Lounge", desc: "Where conversations flow as smoothly as our wines", icon: "🍷" },
+              { title: "Aroma Alley", desc: "A sensory walk through our chef's latest creations", icon: "👃" },
+              { title: "Taste Tango", desc: "Let your palate dance with our perfectly paired dishes", icon: "💃" }
+            ].map((item, index) => (
+              <div key={index} className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg p-6 rounded-3xl shadow-lg transform hover:scale-105 transition-all">
+                <div className="text-5xl mb-4">{item.icon}</div>
+                <h3 className="text-2xl font-semibold mb-2 text-c75">{item.title}</h3>
+                <p className="text-c8">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="max-w-4xl mx-auto p-8 rounded-3xl text-white text-xl bg-c7 font-black mt-7">
-        <p className="mb-4">
-          At Quiet Bites, we understand that dining out should be as comfortable as staying in. Designed with introverts in mind, our restaurant offers a serene, low-pressure atmosphere where you can enjoy exceptional meals without the bustle of traditional dining.
-        </p>
-        <p className="mb-4">
-          Whether you are seeking a cozy nook to savor your favorite dish, a quiet space to unwind, or the luxury of minimal interactions, we have got you covered. From dimmed lighting to private seating options, every detail is curated to let you truly relax and relish your time here.
-        </p>
-        <p>
-          Experience dining that feels as personal as it is delicious. Welcome to your safe space—where solitude meets flavor.
-        </p>
-      </div>
-      <div className="flex justify-center items-center my-10">
-        <Link legacyBehavior href="/dashboard">
-          <a className="bg-c8 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-c9 transition-transform transform hover:scale-105 m-5">
-            Go to Dashboard
-          </a>
-        </Link>
-        <Link legacyBehavior href="/profile">
-          <a className="bg-c8 text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg hover:bg-c9 transition-transform transform hover:scale-105 m-5">
-            Go to Profile
-          </a>
-        </Link>
-      </div>
+
+      <footer className="mt-24 text-center text-c6 pb-8">
+        <p>© 2025 Wine N' Dine. All rights reserved. Savor responsibly.</p>
+      </footer>
     </main>
   );
 }

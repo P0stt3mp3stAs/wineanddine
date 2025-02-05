@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
-import { handleSignOut } from '@/utils/auth';
+
 import DashboardHero from '@/components/DashboardHero';
 import ReservationSection from '@/components/ReservationSection';
 import MenuPreview from '@/components/menu/MenuPreview';
@@ -27,8 +27,6 @@ export default function Dashboard() {
       try {
         console.log('Dashboard - Starting auth check');
         configureAmplify();
-        
-        // Try to get session first
         const session = await fetchAuthSession();
         console.log('Dashboard - Auth session:', session);
         
@@ -47,7 +45,6 @@ export default function Dashboard() {
         }
       } catch (error) {
         console.error('Dashboard - Auth check error:', error);
-        // Add a delay before redirect to see logs
         setTimeout(() => {
           router.push('/signin');
         }, 1000);
@@ -57,11 +54,6 @@ export default function Dashboard() {
     checkAuth();
   }, [router]);
 
-  const handleSignOutClick = async () => {
-    await handleSignOut();
-    router.push('/signin');
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -70,31 +62,11 @@ export default function Dashboard() {
     );
   }
 
-  // if (!userInfo.email) {
-  //   return null;
-  // }
-
   return (
     <main className="min-h-screen">
       <DashboardHero />
       <MenuPreview />
       <ReservationSection />
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="text-gray-600">Welcome, {userInfo.email}</p>
-            </div>
-            <button
-              onClick={handleSignOutClick}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-      </div>
     </main>
   );
 }

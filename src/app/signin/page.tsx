@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { signIn, signOut, getCurrentUser } from 'aws-amplify/auth';
+import { signIn, getCurrentUser } from 'aws-amplify/auth';
 import { useRouter } from 'next/navigation';
 import { configureAmplify } from '@/lib/auth-config';
+import { motion } from 'framer-motion';
 
 export default function SignIn() {
   const router = useRouter();
@@ -17,19 +18,15 @@ export default function SignIn() {
     const initializeAuth = async () => {
       try {
         configureAmplify();
-        
-        // Check if user is already signed in
         try {
           const currentUser = await getCurrentUser();
           if (currentUser) {
-            // If user is already signed in, redirect to dashboard
             router.push('/dashboard');
             return;
           }
         } catch (e) {
           // No user is signed in, continue with sign in page
         }
-        
         setIsConfigured(true);
       } catch (error) {
         console.error('Failed to configure Amplify:', error);
@@ -43,117 +40,105 @@ export default function SignIn() {
   }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
+    e.preventDefault();
+    setLoading(true);
+    setError('');
 
-  try {
-    console.log('Starting sign in...');
-    const signInResult = await signIn({
-      username: email,
-      password,
-      options: {
-        authFlowType: "USER_PASSWORD_AUTH"
-      }
-    });
-
-    console.log('Sign in result:', signInResult);
-
-    if (signInResult.isSignedIn) {
-      // Let's check if we actually have a user after sign in
-      const user = await getCurrentUser();
-      console.log('Current user after sign in:', user);
-      
-      // Let's also check local storage
-      console.log('Local storage tokens:', {
-        accessToken: localStorage.getItem('accessToken'),
-        idToken: localStorage.getItem('idToken')
+    try {
+      const signInResult = await signIn({
+        username: email,
+        password,
+        options: {
+          authFlowType: "USER_PASSWORD_AUTH"
+        }
       });
 
-      window.location.href = '/dashboard';
-      return;
+      if (signInResult.isSignedIn) {
+        window.location.href = '/dashboard';
+        return;
+      }
+    } catch (err) {
+      console.error('Sign in error:', err);
+      setError((err as any).message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Sign in error:', err);
-    setError((err as any).message || 'Failed to sign in');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9">
+        <div className="text-white text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9 p-4">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-3xl p-8 w-full max-w-md shadow-xl"
+      >
+        <h2 className="text-4xl font-bold text-white text-center mb-8">Welcome Back</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="text-red-600 text-center text-sm">{error}</div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-red-500 bg-opacity-20 text-white p-3 rounded-lg text-center"
+            >
+              {error}
+            </motion.div>
           )}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+          <div className="space-y-4">
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <input
-                id="email"
-                name="email"
                 type="email"
-                autoComplete="username"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
                 disabled={loading}
               />
-            </div>
-            <div>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <input
-                id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
                 disabled={loading}
               />
-            </div>
+            </motion.div>
           </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading || !isConfigured}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {loading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </div>
-          <div className="text-center mt-4">
-            <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <button
-                onClick={() => router.push('/signup')}
-                className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-              >
-                Sign up
-              </button>
-            </p>
-          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            type="submit"
+            disabled={loading || !isConfigured}
+            className="w-full py-3 bg-c75 text-white rounded-lg font-semibold transition duration-200 hover:bg-c8 focus:outline-none focus:ring-2 focus:ring-c75 focus:ring-offset-2 focus:ring-offset-c9"
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+          </motion.button>
         </form>
-      </div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-6 text-center text-white"
+        >
+          Don't have an account?{' '}
+          <button
+            onClick={() => router.push('/signup')}
+            className="font-medium text-c75 hover:text-c8 focus:outline-none focus:underline transition duration-200"
+          >
+            Sign up
+          </button>
+        </motion.p>
+      </motion.div>
     </div>
   );
 }
