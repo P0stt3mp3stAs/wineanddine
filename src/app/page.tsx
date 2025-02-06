@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import WineAnimation from "@/components/WineGlassText";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       
       <div className="container mx-auto px-4 py-12 relative z-10">
         <header className="text-center mb-16">
+        {/* <WineAnimation /> */}
           <h1 className="text-6xl md:text-8xl font-extrabold mb-4 text-c6 drop-shadow-lg mt-20">
             Wine N' Dine
           </h1>
@@ -25,7 +27,7 @@ export default function Home() {
                   Explore Our Menu
                 </button>
               </Link>
-              <Link href="/reserve">
+              <Link href="/dashboard">
                 <button className="bg-c4 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:bg-c7 transition-all transform hover:scale-110">
                   Reserve Your Table
                 </button>
