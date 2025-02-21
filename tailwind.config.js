@@ -7,6 +7,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        a1: '#E63946',
+        a2: '#F06A5D',
+        a3: '#F4C986',
+        a4: '#B3E073',
+        a5:'#95D556',
         c4: '#728A5C',
         c5: '#e4cab8',
         c6: '#D3A789',
@@ -14,6 +19,10 @@ module.exports = {
         c75: '#d0432f',
         c8: '#643B2B',
         c9: '#593229',
+      },
+
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', 'sans-serif'],
       },
 
       animation: {

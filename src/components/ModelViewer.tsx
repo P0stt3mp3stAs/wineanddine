@@ -1,6 +1,6 @@
-import React, { Suspense, useEffect, useRef, useState, useCallback } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { useGLTF, Html, Preload, useProgress } from '@react-three/drei';
+import { useGLTF, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, SSAO, Bloom } from '@react-three/postprocessing';
 import dynamic from 'next/dynamic';
@@ -154,11 +154,8 @@ function Model({ url, position, id, isAvailable, onSelect, hitboxDimensions, isB
   );
 }
 
-interface FirstPersonControllerProps {
-  joystickMovement: { x: number; y: number };
-}
 // FirstPersonController component
-const FirstPersonController: React.FC<FirstPersonControllerProps> = ({ joystickMovement }) => {
+const FirstPersonController = () => {
   const { camera, scene, gl } = useThree();
   const controlsRef = useRef<PointerLockControls | null>(null);
   const playerHitboxRef = useRef<THREE.Mesh>();
@@ -270,10 +267,10 @@ const FirstPersonController: React.FC<FirstPersonControllerProps> = ({ joystickM
     // Calculate movement vector based on camera orientation
     const moveVector = new THREE.Vector3(0, 0, 0);
     
-    if (moveState.current.forward || joystickMovement.y > 0) moveVector.add(forward.clone().multiplyScalar(currentSpeed * Math.max(joystickMovement.y, 1)));
-    if (moveState.current.backward || joystickMovement.y < 0) moveVector.add(forward.clone().multiplyScalar(-currentSpeed * Math.max(-joystickMovement.y, 1)));
-    if (moveState.current.right || joystickMovement.x > 0) moveVector.add(right.clone().multiplyScalar(currentSpeed * Math.max(joystickMovement.x, 1)));
-    if (moveState.current.left || joystickMovement.x < 0) moveVector.add(right.clone().multiplyScalar(-currentSpeed * Math.max(-joystickMovement.x, 1)));
+    if (moveState.current.forward) moveVector.add(forward.multiplyScalar(currentSpeed));
+    if (moveState.current.backward) moveVector.add(forward.multiplyScalar(-currentSpeed));
+    if (moveState.current.right) moveVector.add(right.multiplyScalar(currentSpeed));
+    if (moveState.current.left) moveVector.add(right.multiplyScalar(-currentSpeed));
 
     // Check collisions
     const newPosition = camera.position.clone().add(moveVector);
@@ -342,7 +339,7 @@ const LoadingScreen = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-c7">
       <div className="text-center">
-        {/* <WineAnimation /> */}
+        <WineAnimation />
         <div className="w-64 h-2 bg-c5 rounded-full overflow-hidden">
           <div 
             className="h-full bg-c9 transition-all duration-300 ease-out"
@@ -369,11 +366,6 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { active } = useProgress();
-  const [joystickMovement, setJoystickMovement] = useState({ x: 0, y: 0 });
-
-  const handleJoystickMove = useCallback((x: number, y: number) => {
-    setJoystickMovement({ x, y });
-  }, []);
 
   useEffect(() => {
     setIsLoading(active);
@@ -557,7 +549,7 @@ const ModelViewer: React.FC<ModelViewerProps> = ({
             hitboxDimensions={{ width: 0.2, height: 1, depth: 0.2, offsetZ: 0.15, offsetX: 1.25, offsetY: 0.5 }}
           />
         </Suspense>
-        <FirstPersonController joystickMovement={joystickMovement} />
+        <FirstPersonController />
       </Canvas>
       <Crosshair />
     </div>

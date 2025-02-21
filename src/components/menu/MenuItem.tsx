@@ -49,7 +49,7 @@ const MenuItem = ({ id, name, description, price, unit, image, theme }: MenuItem
   };
 
   return (
-    <div className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
+    <div className="bg-[#ffc4a2] bg-opacity-50 backdrop-filter backdrop-blur-lg border-4 border-[#ffc4a2] border-opacity-10 text-[#05004f] rounded-lg shadow-lg flex flex-col h-96 transform hover:scale-105 transition-transform duration-200">
       {image && (
         <div className="relative h-1/2">
           <Image
@@ -76,12 +76,12 @@ const MenuItem = ({ id, name, description, price, unit, image, theme }: MenuItem
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="w-10 h-10 rounded-full bg-c8 text-white flex items-center justify-center hover:bg-c9 transition-all duration-300"
+              className="w-10 h-10 rounded-full bg-[#7c0323] text-white flex items-center justify-center bg-[#b5002f] transition-all duration-300"
             >
               <span className="text-2xl">+</span>
             </button>
           ) : (
-            <div className={`${isClicked ? 'bg-c8' : 'bg-c9'} text-white rounded-full px-4 py-1 flex items-center space-x-4 transition-all duration-300`}>
+            <div className={`${isClicked ? 'bg-[#b5002f]' : 'bg-[#7c0323]'} text-white rounded-full px-4 py-1 flex items-center space-x-4 transition-all duration-300`}>
               <button
                 onClick={handleRemove}
                 className="text-xl font-medium"

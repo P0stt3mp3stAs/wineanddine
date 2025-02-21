@@ -107,60 +107,61 @@ const ReservationSection = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-c7 to-c8 flex items-center justify-center p-2 sm:p-8">
+    <div className="min-h-screen overflow-x-hidden flex items-center justify-center p-2 sm:p-8">
+
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`w-full max-w-4xl bg-c6 rounded-3xl shadow-2xl p-4 sm:p-10 ${
+        className={`w-full max-w-4xl bg-[#ffd9c4] bg-opacity-70 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl p-4 sm:p-10 ${
           isScrolled ? 'sticky top-4' : ''
         }`}
       >
-        <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-8 text-c9 text-center">Reserve Your Experience</h2>
+        <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-8 text-[#05004f] text-center">Reserve Your Experience</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-c9">Reservation Type</label>
+              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-[#05004f]">Reservation Type</label>
               <select 
                 value={reservationType}
                 onChange={(e) => setReservationType(e.target.value as 'drink-only' | 'dine-and-eat')}
-                className="w-full p-2 sm:p-3 border border-c8 rounded-xl text-c9 bg-c7 focus:ring-2 focus:ring-c8 transition-all text-sm sm:text-base"
+                className="w-full p-2 sm:p-3 border border-[#05004f] rounded-xl text-[#05004f] bg-[#ffefe6] focus:ring-2 focus:ring-[#05004f] transition-all text-sm sm:text-base"
               >
                 <option value="dine-and-eat">Dine and Eat</option>
                 <option value="drink-only">Drink Only</option>
               </select>
             </div>
-
+  
             <div>
-              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-c9">Date</label>
+              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-[#05004f]">Date</label>
               <input
                 type="date"
-                className="w-full p-2 sm:p-3 border border-c8 rounded-xl text-c9 bg-c7 focus:ring-2 focus:ring-c8 transition-all text-sm sm:text-base"
+                className="w-full p-2 sm:p-3 border border-[#05004f] rounded-xl text-[#05004f] bg-[#ffefe6] focus:ring-2 focus:ring-[#05004f] transition-all text-sm sm:text-base"
                 min={today}
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
                 required
               />
             </div>
-
+  
             <div>
-              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-c9">Start Time</label>
+              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-[#05004f]">Start Time</label>
               <input
                 type="time"
-                className="w-full p-2 sm:p-3 border border-c8 rounded-xl text-c9 bg-c7 focus:ring-2 focus:ring-c8 transition-all text-sm sm:text-base"
+                className="w-full p-2 sm:p-3 border border-[#05004f] rounded-xl text-[#05004f] bg-[#ffefe6] focus:ring-2 focus:ring-[#05004f] transition-all text-sm sm:text-base"
                 value={startTime}
                 onChange={handleStartTimeChange}
                 required
                 disabled={!selectedDate}
               />
             </div>
-
+  
             <div>
-              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-c9">End Time</label>
+              <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-[#05004f]">End Time</label>
               <input
                 type="time"
-                className="w-full p-2 sm:p-3 border border-c8 rounded-xl text-c9 bg-c7 focus:ring-2 focus:ring-c8 transition-all text-sm sm:text-base"
+                className="w-full p-2 sm:p-3 border border-[#05004f] rounded-xl text-[#05004f] bg-[#ffefe6] focus:ring-2 focus:ring-[#05004f] transition-all text-sm sm:text-base"
                 value={endTime}
                 onChange={handleEndTimeChange}
                 required
@@ -168,9 +169,9 @@ const ReservationSection = () => {
               />
             </div>
           </div>
-
+  
           <div>
-            <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-c9">Number of Guests</label>
+            <label className="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-[#05004f]">Number of Guests</label>
             <div className="flex flex-wrap gap-2 sm:gap-4">
               {['2', '4', '8'].map((count) => (
                 <motion.button
@@ -181,8 +182,8 @@ const ReservationSection = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`flex-1 px-2 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-base font-medium transition-all ${
                     guestCount === count 
-                      ? 'bg-c8 text-white shadow-lg' 
-                      : 'bg-c7 text-c9 hover:bg-c8 hover:text-white'
+                      ? 'bg-[#ffdb3d] text-[#05004f] shadow-lg' 
+                      : 'bg-[#ffefe6] text-[#05004f] hover:bg-[#ffdb3d] hover:text-[#05004f]'
                   }`}
                 >
                   {count} or less
@@ -190,12 +191,12 @@ const ReservationSection = () => {
               ))}
             </div>
           </div>
-
+  
           <motion.button 
             type="submit"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full bg-c9 text-white py-3 sm:py-4 rounded-xl font-medium text-sm sm:text-lg hover:bg-c8 transition-colors shadow-lg"
+            className="w-full bg-[#7c0323] text-[#ffefe6] py-3 sm:py-4 rounded-xl font-medium text-sm sm:text-lg hover:bg-[#742f37] transition-colors shadow-lg"
           >
             Confirm Reservation
           </motion.button>

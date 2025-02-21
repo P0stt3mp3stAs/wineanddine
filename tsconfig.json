@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "types": ["three", "@react-three/fiber", "@react-three/drei"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

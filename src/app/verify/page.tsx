@@ -72,20 +72,20 @@ function VerifyContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#ffd9c4] p-4">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-3xl p-8 w-full max-w-md shadow-xl"
+        className="bg-[#ffefe6] bg-opacity-70 backdrop-filter backdrop-blur-lg rounded-3xl p-8 w-full max-w-md shadow-xl"
       >
-        <h2 className="text-4xl font-bold text-white text-center mb-8">Verify Account</h2>
+        <h2 className="text-4xl font-bold text-[#05004f] text-center mb-8">Verify Account</h2>
         <form onSubmit={handleVerify} className="space-y-6">
           {error && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-red-500 bg-opacity-20 text-white p-3 rounded-lg text-center"
+              className="bg-[#E60012] bg-opacity-20 text-[#05004f] p-3 rounded-lg text-center"
             >
               {error}
             </motion.div>
@@ -97,7 +97,7 @@ function VerifyContent() {
                 placeholder="Email"
                 value={formData.email}
                 onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                className="w-full px-4 py-3 bg-[#7c0323] bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[#ffdb3d] transition duration-200"
                 disabled={loading}
               />
             </motion.div>
@@ -107,7 +107,7 @@ function VerifyContent() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                className="w-full px-4 py-3 bg-[#7c0323] bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[#ffdb3d] transition duration-200"
                 disabled={loading}
               />
             </motion.div>
@@ -117,7 +117,7 @@ function VerifyContent() {
                 placeholder="Verification code"
                 value={formData.code}
                 onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value }))}
-                className="w-full px-4 py-3 bg-white bg-opacity-20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-c75 transition duration-200"
+                className="w-full px-4 py-3 bg-[#7c0323] bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-lg text-white placeholder-white placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-[#ffdb3d] transition duration-200"
                 disabled={loading}
               />
             </motion.div>
@@ -127,7 +127,7 @@ function VerifyContent() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading || !isConfigured}
-            className="w-full px-4 py-3 bg-c75 text-white rounded-lg font-semibold transition duration-200 hover:bg-c75-dark focus:outline-none focus:ring-2 focus:ring-c75 focus:ring-offset-2 focus:ring-offset-gray-100"
+            className="w-full py-3 bg-[#ffdb3d] text-[#05004f] rounded-lg font-semibold transition duration-200 hover:bg-[#fdce00] focus:outline-none focus:ring-2 focus:ring-[#ffdb3d] focus:ring-offset-2 focus:ring-offset-[#ffd9c4]"
           >
             {loading ? 'Verifying...' : 'Verify & Sign In'}
           </motion.button>
@@ -140,8 +140,8 @@ function VerifyContent() {
 export default function VerifyPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-c7 to-c9">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#ffd9c4]">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#05004f]"></div>
       </div>
     }>
       <VerifyContent />

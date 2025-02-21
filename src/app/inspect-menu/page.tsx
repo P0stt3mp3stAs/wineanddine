@@ -39,7 +39,7 @@ export default function InspectMenu() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedSection, setSelectedSection] = useState<keyof MenuData>('specialties');
+  const [selectedSection, setSelectedSection] = useState<keyof MenuData>('salads');
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -83,7 +83,7 @@ export default function InspectMenu() {
   const renderCompactItems = (items: MenuItem[], emoji: string) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
       {items.map((item) => (
-        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg p-3 sm:p-4 flex flex-col justify-between hover:scale-105 hover:shadow-md transition-transform duration-200">
+        <div key={item.id} className="bg-[#ffc4a2] bg-opacity-50 backdrop-filter backdrop-blur-lg border-4 border-[#ffc4a2] border-opacity-10 text-[#05004f] rounded-lg shadow-lg p-3 sm:p-4 flex flex-col justify-between hover:scale-105 hover:shadow-md transition-transform duration-200">
           <div>
             <div className="flex items-center justify-between mb-1 sm:mb-2">
               <h3 className="text-base sm:text-lg font-semibold truncate flex-grow pr-2">{item.name}</h3>
@@ -100,7 +100,7 @@ export default function InspectMenu() {
   const renderMenuItems = (items: MenuItem[], sectionName: string) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
       {items.map((item) => (
-        <div key={item.id} className="bg-c7 border-2 border-c8 text-c9 rounded-lg shadow-lg flex flex-col h-80 sm:h-96 transform hover:scale-105 hover:shadow-md transition-transform duration-200">
+        <div key={item.id} className="bg-[#ffc4a2] bg-opacity-50 backdrop-filter backdrop-blur-lg border-4 border-[#ffc4a2] border-opacity-10 text-[#05004f] rounded-lg shadow-lg flex flex-col h-80 sm:h-96 transform hover:scale-105 hover:shadow-md transition-transform duration-200">
           {item.image ? (
             <div className="relative h-1/2">
               <Image
@@ -112,7 +112,7 @@ export default function InspectMenu() {
               />
             </div>
           ) : (
-            <div className="h-1/2 bg-amber-100 rounded-t-lg"></div>
+            <div className="h-1/2 bg-[#ffd9c4] rounded-t-lg"></div>
           )}
           <div className="p-3 sm:p-4 flex flex-col justify-between h-1/2">
             <div>
@@ -167,9 +167,26 @@ export default function InspectMenu() {
   };
 
   return (
-    <div className="min-h-screen bg-c7 text-c9">
+    <div className="min-h-screen text-[#05004f]">
+
+      <svg
+        className="fixed inset-0 w-[100%] h-[105%] scale-[1.2] opacity-40"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#7c0323"
+        strokeWidth="1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ zIndex: -1 }}
+      >
+        <path 
+          d="M14.792 17.063c0 .337 .057 .618 .057 .9c0 1.8 -1.238 3.037 -2.982 3.037c-1.8 0 -2.98 -1.238 -2.98 -3.206v-.731c-.957 .675 -1.576 .9 -2.42 .9c-1.518 0 -2.925 -1.463 -2.925 -3.094c0 -1.181 .844 -2.194 2.082 -2.756l.28 -.113c-1.574 -.787 -2.362 -1.688 -2.362 -2.925c0 -1.687 1.294 -3.094 2.925 -3.094c.675 0 1.52 .338 2.138 .788l.281 .112c0 -.337 -.056 -.619 -.056 -.844c0 -1.8 1.237 -3.037 2.98 -3.037c1.8 0 2.981 1.237 2.981 3.206v.394l-.056 .281c.956 -.675 1.575 -.9 2.419 -.9c1.519 0 2.925 1.463 2.925 3.094c0 1.181 -.844 2.194 -2.081 2.756l-.282 .169c1.575 .787 2.363 1.688 2.363 2.925c0 1.688 -1.294 3.094 -2.925 3.094c-.675 0 -1.575 -.281 -2.138 -.788l-.225 -.169z" 
+        />
+      </svg>
+
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 text-c8">Our Menu</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 text-[#7c0323]">Our Menu</h1>
         
         <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8">
           {Object.keys(menuSections).map((section) => (
@@ -180,10 +197,10 @@ export default function InspectMenu() {
                 px-3 py-1 sm:px-4 sm:py-2 rounded-full relative font-bold text-xs sm:text-sm
                 overflow-hidden transition-all duration-700
                 ${selectedSection === section
-                  ? 'bg-c8 text-c6 [text-shadow:2px_2px_2px_#B47659]'
-                  : 'bg-c6 text-c9 hover:text-c6 [text-shadow:0px_0px_0px_#643B2B] hover:[text-shadow:1px_1px_1px_#B47659]'
+                  ? 'bg-[#ffdb3d] text-[#05004f] [text-shadow:2px_2px_2px_#ffc4a2]'
+                  : 'bg-[#7c0323] text-white hover:text-[#05004f] [text-shadow:0.5px_0.5px_0.5px_#ffdb3d] hover:[text-shadow:1px_1px_1px_#ffffff]'
                 }
-                after:absolute after:h-1 after:w-1 after:bg-c9 after:left-5 after:bottom-0
+                after:absolute after:h-1 after:w-1 after:bg-[#FFDB3D] after:left-5 after:bottom-0
                 after:translate-y-full after:rounded-md after:transition-all after:duration-700
                 hover:after:scale-[300] hover:after:duration-700
                 after:-z-20 z-30
@@ -194,8 +211,8 @@ export default function InspectMenu() {
           ))}
         </div>
   
-        <div className="bg-c6 rounded-lg shadow-lg p-4 sm:p-6">
-          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-c8">
+        <div className="bg-[#ffefe6] bg-opacity-50 backdrop-filter backdrop-blur-lg rounded-lg shadow-lg p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 text-[#05004f]">
             {menuSections[selectedSection]}
           </h2>
           {renderSelectedSection()}

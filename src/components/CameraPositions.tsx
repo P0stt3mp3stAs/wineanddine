@@ -6,6 +6,7 @@ import * as TWEEN from '@tweenjs/tween.js';
 // Define camera positions
 export const cameraPositions: { name: string; position: [number, number, number]; rotation: [number, number, number]; seatId: string }[] = [
   // { name: "from stage", position: [-1.6, 0.6, 1.6], rotation: [0, -0.85, 0] },
+  { name: "Stool3", position: [0.6, 0.5, 0.143], rotation: [-1.5, -1.3, -1.5], seatId: "stool3" },
   { name: "Couch", position: [0.3, 0.8, -0.3], rotation: [-0.4, -0.85, -0.3], seatId: "couch" },
   { name: "2Table", position: [-1.9, 0.5, -0.3], rotation: [0.3, 3.5, 0.2], seatId: "2table" },
   { name: "2Table1", position: [-1.8, 0.5, -2.1], rotation: [0.2, 3.5, 0.1], seatId: "2table1" },
@@ -16,7 +17,6 @@ export const cameraPositions: { name: string; position: [number, number, number]
   { name: "Stool", position: [0.6, 0.5, 1.15], rotation: [-1.5, -1.3, -1.5], seatId: "stool" },
   { name: "Stool1", position: [0.6, 0.5, 0.825], rotation: [-1.5, -1.3, -1.5], seatId: "stool1" },
   { name: "Stool2", position: [0.6, 0.5, 0.485], rotation: [-1.5, -1.3, -1.5], seatId: "stool2" },
-  { name: "Stool3", position: [0.6, 0.5, 0.143], rotation: [-1.5, -1.3, -1.5], seatId: "stool3" },
 ];
 
 interface CameraPositionsProps {
@@ -80,6 +80,3 @@ const CameraPositions: React.FC<CameraPositionsProps> = ({ currentPositionIndex 
 };
 
 export default CameraPositions;
-
-// 1.575
-// 3.1418

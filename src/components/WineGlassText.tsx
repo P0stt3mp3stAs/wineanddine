@@ -26,9 +26,6 @@ const WineAnimation = () => {
           </div>
         </div>
         
-        {/* Cork (fallen) */}
-        <div className="absolute h-6 w-4 bottom-0 bg-yellow-50 border-t-2 border-red-800 animate-spin-cork"></div>
-        
         {/* Glass */}
         <div className="absolute w-10 bottom-0 left-24 animate-spin-glass">
           {/* Bowl */}

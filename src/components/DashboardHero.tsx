@@ -8,24 +8,19 @@ const DashboardHero = () => {
 
   const slides = [
     {
-      title: "Savor Excellence",
-      description: "Indulge in an unforgettable dining experience.",
+      title: "Interactive Seating",
+      description: "Choose your exact table in our virtual restaurant",
       image: "/1.jpeg"
     },
     {
-      title: "Premium Dining",
-      description: "Exclusive private rooms for intimate gatherings.",
+      title: "Real-Time Availability",
+      description: "See which tables are free for your desired time",
       image: "/2.jpeg"
     },
     {
-      title: "Seasonal Treats",
-      description: "Fresh local ingredients in our seasonal menu.",
+      title: "Pre-order Your Meal",
+      description: "Choose and reserve any dish from our menu in advance",
       image: "/3.jpeg"
-    },
-    {
-      title: "Private Events",
-      description: "Make your celebrations truly memorable.",
-      image: "/4.jpeg"
     }
   ];
 
